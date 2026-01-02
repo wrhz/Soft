@@ -28,14 +28,3 @@ This means:
 - **User code cannot "run wild"**: The Python side only provides UI descriptions, cannot break the rendering pipeline
 - **Ultimate optimization potential**: Assembly-level optimizations possible for different platforms
 
-### 2. Platform-Native Implementations
-```cpp
-// platforms/windows/renderer_win.cpp
-class WindowsRenderer : public Renderer {
-    void drawText(...) override { /* Win32 GDI/DirectWrite */ }
-};
-
-// platforms/linux/renderer_x11.cpp  
-class LinuxRenderer : public Renderer {
-    void drawText(...) override { /* X11/XCB + Cairo/Pango */ }
-};
