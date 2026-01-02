@@ -136,9 +136,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return 0;
         }
         case WM_DESTROY:
+        {
             PostQuitMessage(0);
             FreeConsole();
             return 0;
+        }
     }
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
@@ -201,6 +203,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         wcscpy_s(titleBuffer, title.c_str());
         SetWindowTextW(hWnd, titleBuffer);
     }
+
+    py::tuple size = mainSoft.attr("size").cast<py::tuple>();
+    int width = size[0].cast<int>();
+    int height = size[1].cast<int>();
+
+    RECT rcWorkArea;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWorkArea, 0);
+    int screenWidth = rcWorkArea.right - rcWorkArea.left;
+    int screenHeight = rcWorkArea.bottom - rcWorkArea.top;
+
+    SetWindowPos(hWnd, NULL, (screenWidth - width) / 2, (screenHeight - height) / 2, width, height, SWP_NOZORDER);
 
     rootElement = mainSoft.attr("home")().attr("get_element").cast<py::dict>();
 
