@@ -1,0 +1,15 @@
+CompileFlags:
+    Compiler: cl
+    Add:
+        - /std:c++17
+        - /EHsc
+        - -D_CRT_SECURE_NO_WARNINGS
+        - -D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+        - -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+        - -fms-compatibility
+        - -fms-compatibility-version=19.29
+        - -target x86_64-pc-windows-msvc
+        - -U__GNUC__
+        - -Wno-microsoft-include
+        - /I../packages/pybind11/include
+        - /I../build/windows/windows-python/include
