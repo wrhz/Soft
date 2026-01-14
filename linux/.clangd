@@ -1,5 +1,0 @@
-CompileFlags:
-    Compiler: gcc
-    Add:
-        - -DX11
-        - -I/usr/include/python3.12
