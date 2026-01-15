@@ -59,6 +59,7 @@ def build_windows(python_home, project_dir):
 
         if not os.path.exists(exe_dir + "\\python"):
             extract_zip(os.path.join(project_dir, "python", "windows-python.zip"), exe_dir)
+            subprocess.run([os.path.join(exe_dir, "python", "python.exe"), "get-pip.py"], cwd=os.path.join(exe_dir, "python"))
 
         subprocess.run(cmd, cwd=cpp_dir)
         if sys.argv[1] == "run":

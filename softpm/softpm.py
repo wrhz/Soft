@@ -51,8 +51,8 @@ else:
     exit(1)
 
 args = sys.argv[2:]
-project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-python_home = os.path.join(project_path, "build", platform, f"{platform}-python")
+project_path = os.path.dirname(os.path.abspath(__file__))
+python_home = os.path.join(project_path, "build", platform, "python")
 pip_path = os.path.join(python_home, "Scripts", "pip.exe")
 packages_path = os.path.join(project_path, "packages")
 mode = sys.argv[1]
@@ -66,10 +66,12 @@ try:
         case "uninstall":
             print_data(f"Uninstalling ...", Color.RED)
             for module in os.listdir(packages_path):
-                if get_package_name_from_dist(module) in args:
+                if get_package_name_from_dist(module).lower() in args:      
                     shutil.rmtree(os.path.join(packages_path, module), ignore_errors=False)
                     if not module.endswith(".dist-info"):
                         print_data(f"Uninstalled {module}", Color.RED)
+                elif module.split(".")[0].lower() in args and os.path.isfile(os.path.join(packages_path, module)):
+                    os.remove(os.path.join(packages_path, module))
 
             if len(os.listdir(packages_path)) == 1:
                 print_data(f"No modules installed", Color.YELLOW)
