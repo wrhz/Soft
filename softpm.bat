@@ -1,1 +1,0 @@
-@python softpm/softpm.py %*

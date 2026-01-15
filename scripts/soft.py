@@ -14,7 +14,7 @@ if sys.argv[1] != "run" and sys.argv[1] != "build":
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if sys.argv[2] == "windows":
-    python_home = os.path.join(project_dir, "build", "windows", "windows-python")
+    python_home = os.path.join(project_dir, "build", "windows", "python")
     build_windows(python_home, project_dir)
 elif sys.argv[2] == "linux":
     build_linux(project_dir)

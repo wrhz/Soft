@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 import platform
-# from extract_zip import extract_zip
+from extract_zip import extract_zip
 
 def build_windows(python_home, project_dir):
     try:
@@ -57,7 +57,8 @@ def build_windows(python_home, project_dir):
             for libFile in libFiles:
                 cmd.append(libFile)
 
-        # extract_zip(os.path.join(project_dir, "python-embed", "python-3.12.9-embed-amd64.zip"), os.path.join(exe_dir, "python312"))
+        if not os.path.exists(exe_dir + "\\python"):
+            extract_zip(os.path.join(project_dir, "python", "windows-python.zip"), exe_dir)
 
         subprocess.run(cmd, cwd=cpp_dir)
         if sys.argv[1] == "run":
