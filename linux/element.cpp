@@ -1,8 +1,9 @@
 #include "element.h"
+#include "style.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
 #include <string>
-#include <tuple>
+// #include <tuple>
 
 namespace element
 {
@@ -42,13 +43,14 @@ namespace element
 
         std::string tag = root_element["tag"].cast<std::string>();
         py::object style_object = root_element["style"].attr("style");
+        style::StyleStruct style;
         if (tag == "text")
         {
             std::string text = root_element["text"].cast<std::string>();
 
-            std::tuple<int, int> pos = returnTextPosition(width, height, font_size, text, style_object, cr);
+            style = returnStyle(width, height, font_size, text, style_object, cr);
             
-            cairo_move_to(cr, std::get<0>(pos), std::get<1>(pos));
+            cairo_move_to(cr, style.x, style.y);
             cairo_show_text(cr, text.c_str());
         }
 
@@ -56,19 +58,19 @@ namespace element
         cairo_surface_destroy(surface);
     }
 
-    std::tuple<int, int> Element::returnTextPosition(int width, int height, int font_size, std::string text, py::object style, cairo_t* cr)
+    style::StyleStruct Element::returnStyle(int width, int height, int font_size, std::string text, py::object style_object, cairo_t* cr)
     {
-        std::tuple<int, int> pos;
-        if (!style.is_none()) {
+        style::StyleStruct style;
+        if (!style_object.is_none()) {
             cairo_text_extents_t text_extents;
             cairo_text_extents(cr, text.c_str(), &text_extents);
-            pos = style::Style::handleStyle(width, height, font_size, text_extents.width, text_extents.height, style);
+            style = style::Style::handleStyle(width, height, font_size, text_extents.width, text_extents.height, style_object);
         }
         else
         {
-            pos = std::make_tuple(0, font_size);
+            style.x = font_size;
         }
 
-        return pos;
+        return style;
     }
 }

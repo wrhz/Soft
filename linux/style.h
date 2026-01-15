@@ -7,10 +7,16 @@
 namespace py = pybind11;
 
 namespace style {
+    struct StyleStruct
+    {
+        int x = 0;
+        int y = 0;
+    };
+
     class Style
     {
     public:
-        static std::tuple<int, int> handleStyle(int width, int height, int font_size, int text_width, int text_height, py::dict style);
+        static StyleStruct handleStyle(int width, int height, int font_size, int text_width, int text_height, py::dict style);
     };
 }
 
