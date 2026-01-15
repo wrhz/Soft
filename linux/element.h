@@ -26,7 +26,7 @@ namespace element
         int screen;
         py::object root_element;
 
-        std::tuple<int, int> returnTextPosition(int width, int height, int font_size, std::string text, py::object style, cairo_t* cr);
+        style::StyleStruct returnStyle(int width, int height, int font_size, std::string text, py::object style_object, cairo_t* cr);
     };
 }
 

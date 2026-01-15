@@ -15,7 +15,7 @@ def build_linux(project_dir):
         ]
 
         includePaths = [
-            f"/usr/lib/python3/dist-packages/pybind11/include/pybind11",
+            f"{project_dir}/packages/pybind11/include/pybind11",
             f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}"
         ]
 

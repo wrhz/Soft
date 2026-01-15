@@ -1,47 +1,50 @@
 #include "style.h"
 
-UINT style::Style::handle_style(HDC, RECT rect, py::dict styles)
+namespace style
 {
-    UINT format_style = DT_SINGLELINE;
-
-    for (auto item : styles)
+    StyleStruct Style::handle_style(HDC hdc, RECT rect, py::dict styles)
     {
-        std::string key = item.first.cast<std::string>();
-        std::string value = item.second.cast<std::string>();
-        if (key == "horizontal_align")
+        StyleStruct style_struct;
+
+        for (auto item : styles)
         {
-            if (value == "right")
+            std::string key = item.first.cast<std::string>();
+            std::string value = item.second.cast<std::string>();
+            if (key == "horizontal_align")
             {
-                format_style |= DT_RIGHT;
-            }
-            else if (value == "center")
-            {
-                format_style |= DT_CENTER;
-            }
-            else
-            {
-                format_style |= DT_LEFT;
-            }
-        }
-        else
-        {
-            if (key == "vertical_align")
-            {
-                if (value == "bottom")
+                if (value == "right")
                 {
-                    format_style |= DT_BOTTOM;
+                    style_struct.format_style |= DT_RIGHT;
                 }
-                else if (value == "middle")
+                else if (value == "center")
                 {
-                    format_style |= DT_VCENTER;
+                    style_struct.format_style |= DT_CENTER;
                 }
                 else
                 {
-                    format_style |= DT_TOP;
+                    style_struct.format_style |= DT_LEFT;
+                }
+            }
+            else
+            {
+                if (key == "vertical_align")
+                {
+                    if (value == "bottom")
+                    {
+                        style_struct.format_style |= DT_BOTTOM;
+                    }
+                    else if (value == "middle")
+                    {
+                        style_struct.format_style |= DT_VCENTER;
+                    }
+                    else
+                    {
+                        style_struct.format_style |= DT_TOP;
+                    }
                 }
             }
         }
-    }
 
-    return format_style;
+        return style_struct;
+    }
 }
