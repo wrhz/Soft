@@ -3,6 +3,7 @@ import sys
 import subprocess
 import platform
 from extract_zip import extract_zip
+from build_module import build_module
 
 def build_windows(python_home, project_dir):
     try:
@@ -12,16 +13,17 @@ def build_windows(python_home, project_dir):
 
         files = [
             "element.cpp",
-            "style.cpp"
+            "style.cpp",
+            # "types.cpp"
         ]
 
         includePaths = [
-            f"{project_dir}\\packages\\pybind11\\include",
-            f"{python_home}\\include"
+            os.path.join(project_dir, "packages", "windows", "pybind11", "include"),
+            os.path.join(python_home, "include")
         ]
 
         libPaths = [
-            f"{python_home}/libs"
+            os.path.join(python_home, "libs")
         ]
 
         libFiles = [
@@ -40,8 +42,8 @@ def build_windows(python_home, project_dir):
             "main.cpp"
         ]
 
-        if not os.path.exists(project_dir + "\\build\\windows"):
-            os.makedirs(project_dir + "\\build\\windows")
+        if not os.path.exists(os.path.join(project_dir, "build", "windows")):
+            os.makedirs(os.path.join(project_dir, "build", "windows"))
 
         if len(files) > 0:
             for file in files:
@@ -60,6 +62,8 @@ def build_windows(python_home, project_dir):
         if not os.path.exists(exe_dir + "\\python"):
             extract_zip(os.path.join(project_dir, "python", "windows-python.zip"), exe_dir)
             subprocess.run([os.path.join(exe_dir, "python", "python.exe"), "get-pip.py"], cwd=os.path.join(exe_dir, "python"))
+        
+        # build_module(python_home, os.path.join(project_dir, "packages", "windows"), project_dir)
 
         subprocess.run(cmd, cwd=cpp_dir)
         if sys.argv[1] == "run":

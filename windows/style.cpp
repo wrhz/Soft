@@ -2,10 +2,8 @@
 
 namespace style
 {
-    StyleStruct Style::handle_style(HDC hdc, RECT rect, py::dict styles)
+    void Style::handle_style(HDC hdc, RECT rect, py::dict styles, StyleStruct &style_struct)
     {
-        StyleStruct style_struct;
-
         for (auto item : styles)
         {
             std::string key = item.first.cast<std::string>();
@@ -44,7 +42,5 @@ namespace style
                 }
             }
         }
-
-        return style_struct;
     }
 }

@@ -1,13 +1,13 @@
 from soft.elements import Element
 
 class Soft:
-    title: str = ""
+    title: str = "Soft Windows"
     __size = (800, 600)
     __home: None | Element = None
     __routes: dict = {}
     __font_familys = ("sans-serif", )
 
-    def __init__(self, home, title: str = "", size: tuple[int, int] = (800, 600), font_familys: tuple[str] = ("sans-serif", )):
+    def __init__(self, home, title: str = "Soft Windows", size: tuple[int, int] = (800, 600), font_familys: tuple[str] = ("sans-serif", )):
         self.__home = home
         self.__size = size
         self.__font_familys = font_familys

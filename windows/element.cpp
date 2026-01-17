@@ -7,7 +7,7 @@ void element::Element::draw(py::dict root_element, HDC hdc, RECT rect)
     style::StyleStruct style;
     if (!style_object.is(py::none()))
     {
-        style = style::Style::handle_style(hdc, rect, style_object.attr("style"));
+        style::Style::handle_style(hdc, rect, style_object, style);
     }
     std::string tag = root_element["tag"].cast<std::string>();
     if (tag == "text")
