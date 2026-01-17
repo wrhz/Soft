@@ -7,8 +7,8 @@
 
 namespace driver {
     X11Driver::X11Driver() 
-    : mainSoft(),
-      root_element(),
+    : main_soft_struct(),
+      root_element_struct(),
       size(),
       window(0),
       display(nullptr),
@@ -28,7 +28,7 @@ namespace driver {
         finish();
     }
     
-    int X11Driver::init(py::object mainSoft)
+    int X11Driver::init(soft::types::SoftStruct main_soft_struct)
     {
         display = XOpenDisplay(NULL);
         if (display == NULL)
@@ -39,23 +39,23 @@ namespace driver {
 
         screen = DefaultScreen(display);
 
-        this->mainSoft = mainSoft;
-        title = mainSoft.attr("title").cast<std::string>();
+        this->main_soft_struct = main_soft_struct;
+        title = main_soft_struct.title;
         if (title.length() > 30)
         {
             std::cerr << "The title length is not greater than 30" << std::endl;
             return 1;
         }
 
-        size = mainSoft.attr("size").cast<py::tuple>();
-        width = size[0].cast<int>();
-        height = size[1].cast<int>();
+        size = main_soft_struct.size;
+        width = std::get<0>(size);
+        height = std::get<1>(size);
 
-        root_element = mainSoft.attr("home")().attr("element").cast<py::dict>();
+        root_element_struct = *main_soft_struct.home;
 
-        for (py::handle item : mainSoft.attr("font_familys"))
+        for (std::string font_family : main_soft_struct.font_familys)
         {
-            font_familys.push_back(item.cast<std::string>());
+            font_familys.push_back(font_family);
         }
 
         screen_width = DisplayWidth(display, screen);
@@ -86,7 +86,7 @@ namespace driver {
         XSetNormalHints(display, window, &hints);
 
         elementObject = std::make_shared<element::Element>(
-            display, window, font_familys, screen, root_element
+            display, window, font_familys, screen, root_element_struct
         );
 
         return 0;

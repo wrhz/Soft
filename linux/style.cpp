@@ -2,14 +2,14 @@
 
 namespace style
 {
-    StyleStruct Style::handleStyle(int width, int height, int font_size, int text_width, int text_height, py::dict style)
+    StyleStruct Style::handleStyle(int width, int height, int font_size, int text_width, int text_height, std::map<std::string, std::string> style)
     {
         StyleStruct styleStruct;
         styleStruct.y = font_size;
         for (auto item : style)
         {
-            std::string key = item.first.cast<std::string>();
-            std::string value = item.second.cast<std::string>();
+            std::string key = item.first;
+            std::string value = item.second;
 
             if (key == "horizontal_align")
             {

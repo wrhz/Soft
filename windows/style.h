@@ -1,7 +1,7 @@
 #ifndef STYLE_H
 #define STYLE_H
 
-#include <windows.h>
+#include <Windows.h>
 #include "soft/types.h"
 
 namespace style {

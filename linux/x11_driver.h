@@ -1,14 +1,11 @@
 #ifndef X11_DRIVER_H
 #define X11_DRIVER_H
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <memory>
 #include <string>
 #include <X11/Xlib.h>
+#include <tuple>
 #include "element.h"
-
-namespace py = pybind11;
+#include "soft/types.h"
 
 namespace driver {
     class X11Driver {
@@ -16,14 +13,14 @@ namespace driver {
         X11Driver();
         ~X11Driver();
         
-        int init(py::object mainSoft);
+        int init(soft::types::SoftStruct main_soft_struct);
         void run();
         void finish();
         
     private:
-        py::object mainSoft;
-        py::dict root_element;
-        py::tuple size;
+        soft::types::SoftStruct main_soft_struct;
+        soft::types::ElementStruct root_element_struct;
+        std::tuple<int, int> size;
         Window window;
         Display* display;
         std::shared_ptr<element::Element> elementObject;

@@ -1,10 +1,9 @@
 #ifndef __STYLE_H__
 #define __STYLE_H__
 
-#include <pybind11/embed.h>
+#include <string>
 #include <tuple>
-
-namespace py = pybind11;
+#include <map>
 
 namespace style {
     struct StyleStruct
@@ -16,7 +15,7 @@ namespace style {
     class Style
     {
     public:
-        static StyleStruct handleStyle(int width, int height, int font_size, int text_width, int text_height, py::dict style);
+        static StyleStruct handleStyle(int width, int height, int font_size, int text_width, int text_height, std::map<std::string, std::string> style);
     };
 }
 

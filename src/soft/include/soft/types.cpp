@@ -21,7 +21,7 @@ namespace soft::types {
             }
             else if (key == "text")
             {
-                element_struct.text = value.cast<std::wstring>();
+                element_struct.text = value.cast<std::string>();
             }
             else if (key == "style")
             {
@@ -46,7 +46,7 @@ namespace soft::types {
 
     void init_soft_struct(py::object soft, SoftStruct& soft_struct)
     {
-        soft_struct.title = soft.attr("title").cast<std::wstring>();
+        soft_struct.title = soft.attr("title").cast<std::string>();
         soft_struct.size = soft.attr("size").cast<std::tuple<int, int>>();
         soft_struct.home = new ElementStruct();
         init_element_struct(soft.attr("home")().attr("element"), *soft_struct.home);

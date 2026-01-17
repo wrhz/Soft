@@ -13,13 +13,13 @@ namespace py = pybind11;
 namespace soft::types {
     struct ElementStruct {
         std::string tag = "";
-        std::wstring text = L"";
+        std::string text = "";
         std::vector<ElementStruct*> children = {};
         std::map<std::string, std::string> style = {};
     };
 
     struct SoftStruct {
-        std::wstring title = L"Soft Windows";
+        std::string title = "Soft Windows";
         std::tuple<int, int> size = std::make_tuple(800, 600);
         ElementStruct* home = nullptr;
         std::vector<std::function<ElementStruct*()>> routes = {};

@@ -1,10 +1,11 @@
 #define UNICODE
 #define _UNICODE
 
-#include <windows.h>
+#include <Windows.h>
 #include <pybind11/embed.h>
 #include <filesystem>
 #include "element.h"
+#include "utils.h"
 #include "soft/types.h"
 
 namespace py = pybind11;
@@ -128,6 +129,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     py::module_ main = py::module_::import("lib.main");
     py::object main_soft = main.attr("main")();
+    std::wstring title = utils::utf8_to_wstring(main_soft_struct.title);
 
     soft::types::init_soft_struct(main_soft, main_soft_struct);
     root_element_struct = *main_soft_struct.home;
@@ -136,10 +138,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     {
         return 1;
     }
-    else if (!main_soft_struct.title.empty())
+    else if (!title.empty())
     {
         wchar_t title_buffer[31];
-        wcscpy_s(title_buffer, main_soft_struct.title.c_str());
+        wcscpy_s(title_buffer, title.c_str());
         SetWindowTextW(hwnd, title_buffer);
     }
 
