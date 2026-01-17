@@ -51,7 +51,7 @@ namespace driver {
         width = size[0].cast<int>();
         height = size[1].cast<int>();
 
-        root_element = mainSoft.attr("home")().attr("get_element").cast<py::dict>();
+        root_element = mainSoft.attr("home")().attr("element").cast<py::dict>();
 
         for (py::handle item : mainSoft.attr("font_familys"))
         {

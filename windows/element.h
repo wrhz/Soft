@@ -2,15 +2,14 @@
 #define ELEMENT_H
 
 #include <windows.h>
-#include <pybind11/pybind11.h>
 #include "style.h"
-
-namespace py = pybind11;
+#include "soft/types.h"
+#include <map>
 
 namespace element {
     class Element {
     public:
-        static void draw(py::dict root_element, HDC hdc, RECT rect);
+        static void draw(soft::types::ElementStruct root_element, HDC hdc, RECT rect);
     };
 }
 

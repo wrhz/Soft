@@ -2,9 +2,7 @@
 #define STYLE_H
 
 #include <windows.h>
-#include <pybind11/pybind11.h>
-
-namespace py = pybind11;
+#include "soft/types.h"
 
 namespace style {
     struct StyleStruct
@@ -14,7 +12,7 @@ namespace style {
 
     class Style {
     public:
-        static void handle_style(HDC hdc, RECT rect, py::dict styles, StyleStruct &style_struct);
+        static void handle_style(HDC hdc, RECT rect, std::map<std::string, std::string> styles, StyleStruct& style_struct);
     };
 }
 

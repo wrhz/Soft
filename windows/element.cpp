@@ -1,18 +1,14 @@
 #include "element.h"
-#include "style.h"
 
-void element::Element::draw(py::dict root_element, HDC hdc, RECT rect)
+void element::Element::draw(soft::types::ElementStruct root_element, HDC hdc, RECT rect)
 {
-    py::object style_object = root_element["style"];
+    std::map<std::string, std::string> style_object = root_element.style;
     style::StyleStruct style;
-    if (!style_object.is(py::none()))
-    {
-        style::Style::handle_style(hdc, rect, style_object, style);
-    }
-    std::string tag = root_element["tag"].cast<std::string>();
+    style::Style::handle_style(hdc, rect, style_object, style);
+    std::string tag = root_element.tag;
     if (tag == "text")
     {
-        std::wstring text = root_element["text"].cast<std::wstring>();
+        std::wstring text = root_element.text;
         DrawTextW(hdc, text.c_str(), -1, &rect, style.format_style);
     }
 }

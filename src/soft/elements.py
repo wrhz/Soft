@@ -7,7 +7,7 @@ class Element:
         self.__element = { "tag": tag, "text": text, "children": children, "style": style.style, **kwargs }
 
     @property
-    def get_element(self) -> dict:
+    def element(self) -> dict:
         return self.__element
     
 class Text(Element):
