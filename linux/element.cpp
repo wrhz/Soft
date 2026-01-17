@@ -1,13 +1,11 @@
 #include "element.h"
+#include "soft/types.h"
 #include "style.h"
-#include <pybind11/pybind11.h>
-#include <pybind11/pytypes.h>
 #include <string>
-// #include <tuple>
 
 namespace element
 {
-    Element::Element(Display* display, Window window, std::list<std::string> font_familys, int screen, py::object root_element)
+    Element::Element(Display* display, Window window, std::list<std::string> font_familys, int screen, soft::types::ElementStruct root_element)
     {
         this->display = display;
         this->window = window;
@@ -41,12 +39,12 @@ namespace element
             }
         }
 
-        std::string tag = root_element["tag"].cast<std::string>();
-        py::object style_object = root_element["style"].attr("style");
+        std::string tag = root_element.tag;
+        std::map<std::string, std::string> style_object = root_element.style;
         style::StyleStruct style;
         if (tag == "text")
         {
-            std::string text = root_element["text"].cast<std::string>();
+            std::string text = root_element.text;
 
             style = returnStyle(width, height, font_size, text, style_object, cr);
             
@@ -58,10 +56,10 @@ namespace element
         cairo_surface_destroy(surface);
     }
 
-    style::StyleStruct Element::returnStyle(int width, int height, int font_size, std::string text, py::object style_object, cairo_t* cr)
+    style::StyleStruct Element::returnStyle(int width, int height, int font_size, std::string text, std::map<std::string, std::string> style_object, cairo_t* cr)
     {
         style::StyleStruct style;
-        if (!style_object.is_none()) {
+        if (!style_object.empty()) {
             cairo_text_extents_t text_extents;
             cairo_text_extents(cr, text.c_str(), &text_extents);
             style = style::Style::handleStyle(width, height, font_size, text_extents.width, text_extents.height, style_object);

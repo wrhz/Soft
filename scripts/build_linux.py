@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import platform
+from get_files import get_files
 
 def build_linux(project_dir):
     try:
@@ -9,14 +10,15 @@ def build_linux(project_dir):
         x86_64_dir = os.path.dirname(x86_64_path)
         cpp_dir = os.path.join(project_dir, "linux")
 
-        files = [
-            "element.cpp",
-            "style.cpp"
-        ]
+        files = {
+            *get_files(os.path.join(project_dir, "linux"), remove_files=["main.cpp", "x11_driver.cpp", "wayland_driver.cpp"]),
+            *get_files(os.path.join(project_dir, "src", "soft", "include"))
+        }
 
         includePaths = [
             f"{project_dir}/packages/pybind11/include/pybind11",
-            f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}"
+            f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}",
+            os.path.join(project_dir, "src", "soft", "include")
         ]
 
         libPaths = [
@@ -42,11 +44,11 @@ def build_linux(project_dir):
 
         soft_linux_driver = os.environ.get("SOFT_LINUX_DRIVER", "X11")
         if soft_linux_driver.upper() == "X11":
-            files.append("x11_driver.cpp")
+            files.add("x11_driver.cpp")
             libFiles.append("X11")
             other.append("-DX11")
         elif soft_linux_driver.lower() == "wayland":
-            files.append("wayland_driver.cpp")
+            files.add("wayland_driver.cpp")
             other.append("$(pkg-config --cflags --libs wayland-client++)")
         else:
             print(f"Invalid driver: {soft_linux_driver}")

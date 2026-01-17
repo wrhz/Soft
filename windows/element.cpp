@@ -8,7 +8,7 @@ void element::Element::draw(soft::types::ElementStruct root_element, HDC hdc, RE
     std::string tag = root_element.tag;
     if (tag == "text")
     {
-        std::wstring text = root_element.text;
+        std::wstring text = utils::utf8_to_wstring(root_element.text);
         DrawTextW(hdc, text.c_str(), -1, &rect, style.format_style);
     }
 }

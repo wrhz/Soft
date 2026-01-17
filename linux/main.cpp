@@ -90,7 +90,9 @@ int main(int argc, char* argv[])
         if (use_driver == 1)
         {
             auto run_driver = std::make_unique<driver::X11Driver>();
-            int result = run_driver->init(mainSoft);
+            soft::types::SoftStruct main_soft_struct;
+            soft::types::init_soft_struct(mainSoft, main_soft_struct);
+            int result = run_driver->init(main_soft_struct);
             if (result != 0)
             {
                 std::cerr << "驱动初始化失败: " << result << std::endl;

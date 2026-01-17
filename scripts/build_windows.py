@@ -12,11 +12,10 @@ def build_windows(python_home, project_dir):
         exe_dir = os.path.dirname(exe_path)
         cpp_dir = os.path.join(project_dir, "windows")
 
-        files = [
-            "element.cpp",
-            "style.cpp",
+        files = {
+            *get_files(os.path.join(project_dir, "windows"), remove_files=["main.cpp"]),
             *get_files(os.path.join(project_dir, "src", "soft", "include"))
-        ]
+        }
 
         includePaths = [
             os.path.join(project_dir, "packages", "windows", "pybind11", "include"),

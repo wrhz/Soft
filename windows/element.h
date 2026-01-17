@@ -1,8 +1,9 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-#include <windows.h>
+#include <Windows.h>
 #include "style.h"
+#include "utils.h"
 #include "soft/types.h"
 #include <map>
 
