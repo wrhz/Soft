@@ -2,12 +2,12 @@
 
 namespace style
 {
-    void Style::handle_style(HDC hdc, RECT rect, py::dict styles, StyleStruct &style_struct)
+    void Style::handle_style(HDC hdc, RECT rect, std::map<std::string, std::string> styles, StyleStruct& style_struct)
     {
         for (auto item : styles)
         {
-            std::string key = item.first.cast<std::string>();
-            std::string value = item.second.cast<std::string>();
+            std::string key = item.first;
+            std::string value = item.second;
             if (key == "horizontal_align")
             {
                 if (value == "right")

@@ -4,6 +4,7 @@ import subprocess
 import platform
 from extract_zip import extract_zip
 from build_module import build_module
+from get_files import get_files
 
 def build_windows(python_home, project_dir):
     try:
@@ -14,12 +15,13 @@ def build_windows(python_home, project_dir):
         files = [
             "element.cpp",
             "style.cpp",
-            # "types.cpp"
+            *get_files(os.path.join(project_dir, "src", "soft", "include"))
         ]
 
         includePaths = [
             os.path.join(project_dir, "packages", "windows", "pybind11", "include"),
-            os.path.join(python_home, "include")
+            os.path.join(python_home, "include"),
+            os.path.join(project_dir, "src", "soft", "include")
         ]
 
         libPaths = [

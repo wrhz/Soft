@@ -5,12 +5,14 @@
 #include <pybind11/embed.h>
 #include <filesystem>
 #include "element.h"
+#include "soft/types.h"
 
 namespace py = pybind11;
 namespace fs = std::filesystem;
 
 HWND hwnd;
-py::object root_element;
+soft::types::SoftStruct main_soft_struct;
+soft::types::ElementStruct root_element_struct;
 
 void setup_console_for_python()
 {
@@ -63,7 +65,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hwnd, &ps);
             RECT rect;
             GetClientRect(hwnd, &rect);
-            element::Element::draw(root_element, hdc, rect);
+            element::Element::draw(root_element_struct, hdc, rect);
             EndPaint(hwnd, &ps);
             return 0;
         }
@@ -125,21 +127,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     init();
 
     py::module_ main = py::module_::import("lib.main");
-    py::object mainSoft = main.attr("main")();
-    std::wstring title = mainSoft.attr("title").cast<std::wstring>();
+    py::object main_soft = main.attr("main")();
 
-    if (title.length() > 30)
+    soft::types::init_soft_struct(main_soft, main_soft_struct);
+    root_element_struct = *main_soft_struct.home;
+
+    if (main_soft_struct.title.length() > 30)
     {
         return 1;
     }
-    else if (!title.empty())
+    else if (!main_soft_struct.title.empty())
     {
         wchar_t title_buffer[31];
-        wcscpy_s(title_buffer, title.c_str());
+        wcscpy_s(title_buffer, main_soft_struct.title.c_str());
         SetWindowTextW(hwnd, title_buffer);
     }
 
-    py::tuple size = mainSoft.attr("size").cast<py::tuple>();
+    py::tuple size = main_soft.attr("size").cast<py::tuple>();
     int width = size[0].cast<int>();
     int height = size[1].cast<int>();
 
@@ -149,8 +153,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     int screen_height = rcWorkArea.bottom - rcWorkArea.top;
 
     SetWindowPos(hwnd, NULL, (screen_width - width) / 2, (screen_height - height) / 2, width, height, SWP_NOZORDER);
-
-    root_element = mainSoft.attr("home")().attr("get_element").cast<py::dict>();
 
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
