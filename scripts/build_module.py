@@ -1,14 +1,20 @@
 import os
+import re
 
-def build_module(venvs_dir: str, dir: str, project_dir: str):
+def extract_names(file_path):
+    with open(file_path, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            match = re.match(r'^([A-Za-z0-9._-]+)', line)
+            if match:
+                print(match.group(1))
+
+def build_module(python_home: str, dir: str, project_dir: str):
     for file in os.listdir(dir):
         if os.path.isfile(os.path.join(dir, file)):
             file_path = os.path.join(dir, file)
-            if file.endswith(".cpp"):
-                os.system(f"{venvs_dir}/Scripts/python -m nuitka --module={file_path} --output-dir={dir}")
-            else:
-                with open(os.path.join(dir, file), "w") as wf:
-                    with open(file_path, "r") as rf:
-                        wf.write(rf.read())
+            print(file_path)
         else:
-            build_module(venvs_dir, os.path.join(dir, file), project_dir)
+            build_module(python_home, os.path.join(dir, file), project_dir)

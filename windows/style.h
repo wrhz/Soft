@@ -14,7 +14,7 @@ namespace style {
 
     class Style {
     public:
-        static StyleStruct handle_style(HDC hdc, RECT rect, py::dict styles);
+        static void handle_style(HDC hdc, RECT rect, py::dict styles, StyleStruct &style_struct);
     };
 }
 
