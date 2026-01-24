@@ -9,27 +9,51 @@
 
 #include <filesystem>
 #include <iostream>
+#include <unistd.h>
+#include <libgen.h>
 
 namespace py = pybind11;
 namespace fs = std::filesystem;
 
 int use_driver = 1;
 
+std::string get_exe_parent_dir()
+{
+    char exe_path[PATH_MAX];
+    char *parent_dir;
+
+    ssize_t count = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+    if (count == -1) {
+        perror("readlink failed");
+        return "";
+    }
+    exe_path[count] = '\0';
+
+    char path_copy[PATH_MAX];
+    strncpy(path_copy, exe_path, sizeof(path_copy));
+    parent_dir = dirname(path_copy);
+
+    char parent_dir_saved[PATH_MAX];
+    strncpy(parent_dir_saved, parent_dir, sizeof(parent_dir_saved) - 1);
+    parent_dir_saved[sizeof(parent_dir_saved) - 1] = '\0';
+
+    return parent_dir_saved;
+}
+
 void init()
 {
-    fs::path current_path = fs::current_path();
-    
-    fs::path project_root = current_path.parent_path().parent_path();
-    
     py::module_ sys = py::module_::import("sys");
+
+    fs::path exe_dir = get_exe_parent_dir();
     
-    sys.attr("path").attr("append")(project_root.string());
-    
-    fs::path lib_path = project_root / "lib";
+    fs::path lib_path = exe_dir / "lib";
     sys.attr("path").attr("append")(lib_path.string());
 
-    fs::path src_path = project_root / "src";
+    fs::path src_path = exe_dir / "src";
     sys.attr("path").attr("append")(src_path.string());
+
+    fs::path packages_path = exe_dir / "packages";
+    sys.attr("path").attr("append")(packages_path.string());
 }
 
 std::string lower(std::string str)

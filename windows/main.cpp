@@ -2,6 +2,7 @@
 #define _UNICODE
 
 #include <Windows.h>
+#include <shlwapi.h>
 #include <pybind11/embed.h>
 #include <filesystem>
 #include "element.h"
@@ -14,6 +15,33 @@ namespace fs = std::filesystem;
 HWND hwnd;
 soft::types::SoftStruct main_soft_struct;
 soft::types::ElementStruct root_element_struct;
+
+std::string WideStringToUtf8(const std::wstring& wstr) {
+    if (wstr.empty()) return "";
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, 
+                                           wstr.c_str(), (int)wstr.size(),
+                                           NULL, 0, NULL, NULL);
+    std::string strTo(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, 
+                        wstr.c_str(), (int)wstr.size(),
+                        &strTo[0], size_needed, NULL, NULL);
+    return strTo;
+}
+
+std::string GetExeParentDirString() {
+    wchar_t exePath[MAX_PATH] = { 0 };
+    
+    DWORD length = GetModuleFileNameW(NULL, exePath, MAX_PATH);
+    if (length == 0 || length >= MAX_PATH) {
+        return "";
+    }
+
+    if (!PathRemoveFileSpecW(exePath)) {
+        return "";
+    }
+
+    return WideStringToUtf8(exePath);
+}
 
 void setup_console_for_python()
 {
@@ -31,19 +59,18 @@ void init()
 {
     setup_console_for_python();
 
-    fs::path current_path = fs::current_path();
-    
-    fs::path project_root = current_path.parent_path().parent_path();
-    
     py::module_ sys = py::module_::import("sys");
+
+    fs::path exe_dir = GetExeParentDirString();
     
-    sys.attr("path").attr("append")(project_root.string());
-    
-    fs::path lib_path = project_root / "lib";
+    fs::path lib_path = exe_dir / "lib";
     sys.attr("path").attr("append")(lib_path.string());
 
-    fs::path src_path = project_root / "src";
+    fs::path src_path = exe_dir / "src";
     sys.attr("path").attr("append")(src_path.string());
+
+    fs::path packages_path = exe_dir / "packages";
+    sys.attr("path").attr("append")(packages_path.string());
 
     auto io_module = py::module_::import("io");
     
