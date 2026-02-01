@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import platform
+import shutil
 from extract_zip import extract_zip
 from get_files import get_files
 from build_modules import build_modules
@@ -20,7 +21,8 @@ def build_windows(python_home, project_dir):
         includePaths = [
             os.path.join(project_dir, "packages", "windows", "pybind11", "include"),
             os.path.join(python_home, "include"),
-            os.path.join(project_dir, "src", "soft", "include")
+            os.path.join(project_dir, "src", "soft", "include"),
+            os.path.join(project_dir, "src")
         ]
 
         libPaths = [
@@ -46,6 +48,15 @@ def build_windows(python_home, project_dir):
 
         if not os.path.exists(os.path.join(project_dir, "build", "windows")):
             os.makedirs(os.path.join(project_dir, "build", "windows"))
+        else:
+            for file in os.listdir(os.path.join(project_dir, "build", "windows")):
+                if file in ["python"]:
+                    continue
+
+                if os.path.isfile(os.path.join(project_dir, "build", "windows", file)):
+                    os.remove(os.path.join(project_dir, "build", "windows", file))
+                else:
+                    shutil.rmtree(os.path.join(project_dir, "build", "windows", file))
 
         if len(files) > 0:
             for file in files:
@@ -68,6 +79,8 @@ def build_windows(python_home, project_dir):
         if not os.path.exists(os.path.join(exe_dir, "packages")):
             os.makedirs(os.path.join(exe_dir, "packages"))
         
+        subprocess.run(["robocopy", os.path.join(project_dir, "config"), os.path.join(exe_dir, "config"), "/E", "/XJ", "/R:0", "/W:0"], cwd=project_dir)
+        subprocess.run(["robocopy", os.path.join(project_dir, "resources"), os.path.join(exe_dir, "resources"), "/E", "/XJ", "/R:0", "/W:0"], cwd=project_dir)
         subprocess.run(["robocopy", os.path.join(project_dir, "packages", "windows"), os.path.join(exe_dir, "packages"), "/E", "/XJ", "/R:0", "/W:0"], cwd=project_dir)
         build_modules(os.path.join(project_dir, "src"), exe_dir, "python")
         build_modules(os.path.join(project_dir, "lib"), exe_dir, "python")

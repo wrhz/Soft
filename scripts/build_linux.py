@@ -20,7 +20,9 @@ def build_linux(project_dir):
         includePaths = [
             f"{project_dir}/packages/pybind11/include/pybind11",
             f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}",
-            os.path.join(project_dir, "src", "soft", "include")
+            "/usr/include/freetype2",
+            os.path.join(project_dir, "src", "soft", "include"),
+            os.path.join(project_dir, "src")
         ]
 
         libPaths = [
@@ -28,6 +30,7 @@ def build_linux(project_dir):
         ]
 
         libFiles = [
+            "freetype",
             "cairo"
         ]
 
@@ -80,6 +83,9 @@ def build_linux(project_dir):
         if len(other) > 0:
             for otherFile in other:
                 cmd.append(otherFile)
+
+        subprocess.run(["cp", "-r", os.path.join(project_dir, "config"), os.path.join(x86_64_dir, "config")])
+        subprocess.run(["cp", "-r", os.path.join(project_dir, "resources"), os.path.join(x86_64_dir, "resources")])
 
         build_modules(os.path.join(project_dir, "src"), x86_64_dir, "python3")
         build_modules(os.path.join(project_dir, "lib"), x86_64_dir, "python3")
