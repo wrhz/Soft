@@ -3,4 +3,4 @@ __pycache__/
 .vscode/
 web/
 server/
-web-python.tar.bz2
+python/web-python.tar.bz2
