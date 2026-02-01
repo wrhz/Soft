@@ -13,3 +13,4 @@ CompileFlags:
         - -Wno-microsoft-include
         - /I../../../../packages/windows/pybind11/include
         - /I../../../../build/windows/python/include
+        - /I../../../freetype/include

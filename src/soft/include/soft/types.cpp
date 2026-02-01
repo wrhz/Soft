@@ -1,4 +1,5 @@
 #include "types.h"
+#include <vector>
 
 namespace soft::types {
     void init_element_struct(py::object element, ElementStruct& element_struct)
@@ -48,6 +49,7 @@ namespace soft::types {
     {
         soft_struct.title = soft.attr("title").cast<std::string>();
         soft_struct.size = soft.attr("size").cast<std::tuple<int, int>>();
+        soft_struct.font_family = soft.attr("font_family").cast<std::string>();
         soft_struct.home = new ElementStruct();
         init_element_struct(soft.attr("home")().attr("element"), *soft_struct.home);
     }

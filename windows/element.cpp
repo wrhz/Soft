@@ -1,6 +1,6 @@
 #include "element.h"
 
-void element::Element::draw(soft::types::ElementStruct root_element, HDC hdc, RECT rect)
+void element::Element::draw(soft::types::ElementStruct root_element, std::string font_family, HDC hdc, RECT rect)
 {
     std::map<std::string, std::string> style_object = root_element.style;
     style::StyleStruct style;

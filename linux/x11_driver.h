@@ -4,8 +4,13 @@
 #include <string>
 #include <X11/Xlib.h>
 #include <tuple>
+#include <cairo/cairo-ft.h>
+#include <filesystem>
 #include "element.h"
 #include "soft/types.h"
+
+namespace fs = std::filesystem;
+
 
 namespace driver {
     class X11Driver {
@@ -25,13 +30,17 @@ namespace driver {
         Display* display;
         std::shared_ptr<element::Element> elementObject;
         std::string title;
-        std::list<std::string> font_familys;
+        std::string default_font_family;
         int width;
         int height;
         int screen;
         int screen_width;
         int screen_height;
         int font_size;
+        FT_Library library;
+        FT_Face ft_face;
+        cairo_font_face_t *cairo_face;
+        fs::path exe_dir;
     };
 }
 

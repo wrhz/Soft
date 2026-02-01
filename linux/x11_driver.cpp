@@ -1,9 +1,13 @@
 #include "x11_driver.h"
 #include "element.h"
+#include "freetype/freetype.h"
+#include "nlohmann/json.hpp"
 #include <X11/Xutil.h>
 #include <pybind11/pytypes.h>
 #include <thread>
 #include <iostream>
+#include <fstream>
+#include <sys/auxv.h>
 
 namespace driver {
     X11Driver::X11Driver() 
@@ -14,13 +18,17 @@ namespace driver {
       display(nullptr),
       elementObject(nullptr),
       title("Soft Linux"),
-      font_familys(),
+      default_font_family(),
       width(800),
       height(600),
       screen(0),
       screen_width(0),
       screen_height(0),
-      font_size(24)
+      font_size(24),
+      library(),
+      ft_face(),
+      cairo_face(nullptr),
+      exe_dir("")
     {}
 
     X11Driver::~X11Driver()
@@ -30,6 +38,8 @@ namespace driver {
     
     int X11Driver::init(soft::types::SoftStruct main_soft_struct)
     {
+        exe_dir = fs::path((char*)getauxval(AT_EXECFN)).parent_path();
+
         display = XOpenDisplay(NULL);
         if (display == NULL)
         {
@@ -53,11 +63,6 @@ namespace driver {
 
         root_element_struct = *main_soft_struct.home;
 
-        for (std::string font_family : main_soft_struct.font_familys)
-        {
-            font_familys.push_back(font_family);
-        }
-
         screen_width = DisplayWidth(display, screen);
         screen_height = DisplayHeight(display, screen);
 
@@ -70,6 +75,23 @@ namespace driver {
             BlackPixel(display, screen),
             WhitePixel(display, screen)
         );
+
+        std::ifstream file((exe_dir / "config" / "font.json").string());
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string font_config = buffer.str(); 
+        nlohmann::json font_json = nlohmann::json::parse(font_config);
+        std::string font_family_name = main_soft_struct.font_family;
+        default_font_family = font_json["font_families"][font_family_name].get<std::string>();
+        FT_Init_FreeType(&library);
+        if (FT_New_Face(library, (exe_dir / "resources" / "fonts" / default_font_family).string().c_str(), 0, &ft_face) != 0) {
+            std::cerr << "Error Cannot load font file: " 
+                    << (exe_dir / "resources" / "fonts" / default_font_family).string() 
+                    << std::endl;
+            return 1;
+        }
+        cairo_face = cairo_ft_font_face_create_for_ft_face(ft_face, 0);
+        font_size = font_json["font_size"].get<int>();
 
         XStoreName(display, window, title.length() == 0 ? "Soft Linux" : title.c_str());
 
@@ -86,8 +108,20 @@ namespace driver {
         XSetNormalHints(display, window, &hints);
 
         elementObject = std::make_shared<element::Element>(
-            display, window, font_familys, screen, root_element_struct
+            display, window,default_font_family, screen, root_element_struct
         );
+
+        cairo_surface_t *surface = cairo_xlib_surface_create(display, window,
+                                                DefaultVisual(display, screen),
+                                                width, height);
+        cairo_t *cr = cairo_create(surface);
+
+        cairo_set_source_rgb(cr, 1, 1, 1);
+
+        cairo_set_source_rgb(cr, 0, 0, 0);
+
+        cairo_destroy(cr);
+        cairo_surface_destroy(surface);
 
         return 0;
     }
@@ -116,7 +150,7 @@ namespace driver {
                 
                 switch (event.type) {
                     case Expose:
-                        (*elementObject).draw(width, height, font_size);
+                        (*elementObject).draw(width, height, font_size, cairo_face);
                         break;
                     case KeyPress:
                     case ButtonPress:
@@ -140,5 +174,9 @@ namespace driver {
             XCloseDisplay(display);
             display = nullptr;
         }
+
+        cairo_font_face_destroy(cairo_face);
+        FT_Done_Face(ft_face);
+        FT_Done_FreeType(library);
     }
 }

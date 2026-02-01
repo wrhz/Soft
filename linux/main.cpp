@@ -9,7 +9,6 @@
 
 #include <filesystem>
 #include <iostream>
-#include <unistd.h>
 #include <libgen.h>
 
 namespace py = pybind11;
@@ -119,7 +118,7 @@ int main(int argc, char* argv[])
             int result = run_driver->init(main_soft_struct);
             if (result != 0)
             {
-                std::cerr << "驱动初始化失败: " << result << std::endl;
+                std::cerr << "Driver initialization failed: " << result << std::endl;
                 return 1;
             }
 
@@ -133,7 +132,7 @@ int main(int argc, char* argv[])
         }
 
     } catch (const std::exception& e) {
-        std::cerr << "错误: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 

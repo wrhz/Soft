@@ -3,6 +3,7 @@
 
 #include <cairo/cairo.h>
 #include <cairo/cairo-xlib.h>
+#include <cairo/cairo-ft.h>
 #include <list>
 
 #include "style.h"
@@ -14,13 +15,13 @@ namespace element
     {
     public:
         Element();
-        Element(Display* display, Window window, std::list<std::string> font_familys, int screen, soft::types::ElementStruct root_element);
-        void draw(int width, int height, int font_size);
+        Element(Display* display, Window window, std::string font_family, int screen, soft::types::ElementStruct root_element);
+        void draw(int width, int height, int font_size, cairo_font_face_t *cairo_face);
 
     private:
         Display* display;
         Window window;
-        std::list<std::string> font_familys;
+        std::string font_family;
         int screen;
         soft::types::ElementStruct root_element;
 

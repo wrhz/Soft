@@ -14,3 +14,5 @@ CompileFlags:
         - /I../packages/windows/pybind11/include
         - /I../build/windows/python/include
         - /I../src/soft/include
+        - /I../src/freetype/include
+        - /I../src

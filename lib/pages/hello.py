@@ -7,4 +7,4 @@ def hello():
         vertical_align="middle"
     )
 
-    return Text("Hello, World!", style=style)
+    return Text("Hello Soft!", style=style)

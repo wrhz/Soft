@@ -2,15 +2,16 @@
 #define ELEMENT_H
 
 #include <Windows.h>
+#include <map>
+
 #include "style.h"
 #include "utils.h"
 #include "soft/types.h"
-#include <map>
 
 namespace element {
     class Element {
     public:
-        static void draw(soft::types::ElementStruct root_element, HDC hdc, RECT rect);
+        static void draw(soft::types::ElementStruct root_element, std::string font_family, HDC hdc, RECT rect);
     };
 }
 

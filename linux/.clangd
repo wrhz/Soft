@@ -4,3 +4,5 @@ CompileFlags:
         - -DX11
         - -I/usr/include/python3.12
         - -I../src/soft/include
+        - -I../src
+        - -I/usr/include/freetype2

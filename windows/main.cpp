@@ -2,9 +2,14 @@
 #define _UNICODE
 
 #include <Windows.h>
+#include <wingdi.h>
 #include <shlwapi.h>
-#include <pybind11/embed.h>
 #include <filesystem>
+#include <fstream>
+
+#include "pybind11/embed.h"
+#include "nlohmann/json.hpp"
+
 #include "element.h"
 #include "utils.h"
 #include "soft/types.h"
@@ -13,20 +18,11 @@ namespace py = pybind11;
 namespace fs = std::filesystem;
 
 HWND hwnd;
+HFONT hFont;
 soft::types::SoftStruct main_soft_struct;
 soft::types::ElementStruct root_element_struct;
-
-std::string WideStringToUtf8(const std::wstring& wstr) {
-    if (wstr.empty()) return "";
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, 
-                                           wstr.c_str(), (int)wstr.size(),
-                                           NULL, 0, NULL, NULL);
-    std::string strTo(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, 
-                        wstr.c_str(), (int)wstr.size(),
-                        &strTo[0], size_needed, NULL, NULL);
-    return strTo;
-}
+std::string default_font_family = "Noto Serif SC";
+fs::path exe_dir;
 
 std::string GetExeParentDirString() {
     wchar_t exePath[MAX_PATH] = { 0 };
@@ -40,7 +36,7 @@ std::string GetExeParentDirString() {
         return "";
     }
 
-    return WideStringToUtf8(exePath);
+    return utils::wstring_to_utf8(exePath);
 }
 
 void setup_console_for_python()
@@ -93,7 +89,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hwnd, &ps);
             RECT rect;
             GetClientRect(hwnd, &rect);
-            element::Element::draw(root_element_struct, hdc, rect);
+            HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+
+            element::Element::draw(root_element_struct, default_font_family, hdc, rect);
+            
+            SelectObject(hdc, hOldFont);
+            
             EndPaint(hwnd, &ps);
             return 0;
         }
@@ -109,87 +110,124 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+    exe_dir = GetExeParentDirString();
 
-    atexit([]() {
-        if (Py_IsInitialized()) {
-            Py_Finalize();
+    try
+    {
+        SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+
+        atexit([]() {
+            if (Py_IsInitialized()) {
+                Py_Finalize();
+            }
+        });
+
+        SetDllDirectoryA((exe_dir / "python").string().c_str());
+
+        py::scoped_interpreter guard{};
+
+        init();
+
+        py::module_ main = py::module_::import("lib.main");
+        py::object main_soft = main.attr("main")();
+
+        soft::types::init_soft_struct(main_soft, main_soft_struct);
+        root_element_struct = *main_soft_struct.home;
+
+        if (main_soft_struct.title.length() > 30)
+        {
+            return 1;
         }
-    });
 
-    const wchar_t* className = L"SoftWindowsClass";
-    
-    WNDCLASSW wc = {0};
+        std::string font_family_name = main_soft_struct.font_family;
 
-    wc.lpfnWndProc = WindowProc;
-    wc.hInstance = hInstance;
-    wc.lpszClassName = className;
-    wc.hCursor = LoadCursorW(NULL, L"IDC_ARROW");
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    
-    if (RegisterClassW(&wc) == 0)
-    {
-        MessageBoxW(NULL, L"Failed to register window class", L"Error", MB_ICONERROR);
-        return 1;
+        std::ifstream file(exe_dir / "config" / "font.json");
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string font_config = buffer.str(); 
+        nlohmann::json font_json = nlohmann::json::parse(font_config);
+
+        default_font_family = font_json["font_families"][font_family_name].get<std::string>();
+        int font_size = font_json["font_size"].get<int>();
+
+        AddFontResourceEx((exe_dir / "resources" / "fonts" / default_font_family).wstring().c_str(), FR_PRIVATE, NULL);
+
+        const wchar_t* className = L"SoftWindowsClass";
+        
+        WNDCLASSW wc = {0};
+
+        wc.lpfnWndProc = WindowProc;
+        wc.hInstance = hInstance;
+        wc.lpszClassName = className;
+        wc.hCursor = LoadCursorW(NULL, L"IDC_ARROW");
+        wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+        
+        if (RegisterClassW(&wc) == 0)
+        {
+            MessageBoxW(NULL, L"Failed to register window class", L"Error", MB_ICONERROR);
+            return 1;
+        }
+        
+        hwnd = CreateWindowW(
+            className,
+            L"Soft Windows",
+            WS_OVERLAPPEDWINDOW,
+            CW_USEDEFAULT, CW_USEDEFAULT,
+            640, 480,
+            NULL, NULL, hInstance, NULL
+        );
+
+        hFont = CreateFontW(
+            -font_size,
+            0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+            utils::utf8_to_wstring(font_family_name).c_str()
+        );
+
+        SendMessageW(hwnd, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+        if (hwnd == NULL)
+        {
+            OutputDebugString(TEXT("Failed to create window\n"));
+            return 1;
+        }
+
+        std::wstring title = utils::utf8_to_wstring(main_soft_struct.title);
+
+        if (!title.empty())
+        {
+            wchar_t title_buffer[31];
+            wcscpy_s(title_buffer, title.c_str());
+            SetWindowTextW(hwnd, title_buffer);
+        }
+
+        py::tuple size = main_soft.attr("size").cast<py::tuple>();
+        int width = size[0].cast<int>();
+        int height = size[1].cast<int>();
+
+        RECT rcWorkArea;
+        SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWorkArea, 0);
+        int screen_width = rcWorkArea.right - rcWorkArea.left;
+        int screen_height = rcWorkArea.bottom - rcWorkArea.top;
+
+        SetWindowPos(hwnd, NULL, (screen_width - width) / 2, (screen_height - height) / 2, width, height, SWP_NOZORDER);
+
+        ShowWindow(hwnd, nCmdShow);
+        UpdateWindow(hwnd);
+
+        MSG msg;
+        while (GetMessage(&msg, NULL, 0, 0)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        DeleteObject(hFont);
+        RemoveFontResourceEx((exe_dir / "resources" / "fonts" / default_font_family).wstring().c_str(), FR_PRIVATE, NULL);
     }
-    
-    hwnd = CreateWindowW(
-        className,
-        L"Soft Windows",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        640, 480,
-        NULL, NULL, hInstance, NULL
-    );
-
-    if (hwnd == NULL)
+    catch (const std::exception& e)
     {
-        OutputDebugString(TEXT("Failed to create window\n"));
-        return 1;
-    }
-
-    SetDllDirectoryA(".\\python-3.12.9-embed-amd64");
-
-    py::scoped_interpreter guard{};
-
-    init();
-
-    py::module_ main = py::module_::import("lib.main");
-    py::object main_soft = main.attr("main")();
-    std::wstring title = utils::utf8_to_wstring(main_soft_struct.title);
-
-    soft::types::init_soft_struct(main_soft, main_soft_struct);
-    root_element_struct = *main_soft_struct.home;
-
-    if (main_soft_struct.title.length() > 30)
-    {
-        return 1;
-    }
-    else if (!title.empty())
-    {
-        wchar_t title_buffer[31];
-        wcscpy_s(title_buffer, title.c_str());
-        SetWindowTextW(hwnd, title_buffer);
-    }
-
-    py::tuple size = main_soft.attr("size").cast<py::tuple>();
-    int width = size[0].cast<int>();
-    int height = size[1].cast<int>();
-
-    RECT rcWorkArea;
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWorkArea, 0);
-    int screen_width = rcWorkArea.right - rcWorkArea.left;
-    int screen_height = rcWorkArea.bottom - rcWorkArea.top;
-
-    SetWindowPos(hwnd, NULL, (screen_width - width) / 2, (screen_height - height) / 2, width, height, SWP_NOZORDER);
-
-    ShowWindow(hwnd, nCmdShow);
-    UpdateWindow(hwnd);
-
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        utils::console_log(exe_dir, e.what());
     }
     
     return 0;
