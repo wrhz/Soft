@@ -4,3 +4,4 @@ __pycache__/
 web/
 server/
 python/web-python.tar.bz2
+*.obj
