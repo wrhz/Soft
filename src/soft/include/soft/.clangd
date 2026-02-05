@@ -12,5 +12,4 @@ CompileFlags:
         - -U__GNUC__
         - -Wno-microsoft-include
         - /I../../../../packages/windows/pybind11/include
-        - /I../../../../build/windows/python/include
-        - /I../../../freetype/include
+        - /ID:/soft/Python3/include

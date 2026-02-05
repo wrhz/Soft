@@ -11,8 +11,8 @@
 
 namespace driver {
     X11Driver::X11Driver() 
-    : main_soft_struct(),
-      root_element_struct(),
+    : main_soft(),
+      root_element(),
       size(),
       window(0),
       display(nullptr),
@@ -36,7 +36,7 @@ namespace driver {
         finish();
     }
     
-    int X11Driver::init(soft::types::SoftStruct main_soft_struct)
+    int X11Driver::init(soft::types::Soft main_soft)
     {
         exe_dir = fs::path((char*)getauxval(AT_EXECFN)).parent_path();
 
@@ -49,19 +49,19 @@ namespace driver {
 
         screen = DefaultScreen(display);
 
-        this->main_soft_struct = main_soft_struct;
-        title = main_soft_struct.title;
+        this->main_soft = main_soft;
+        title = main_soft.title;
         if (title.length() > 30)
         {
             std::cerr << "The title length is not greater than 30" << std::endl;
             return 1;
         }
 
-        size = main_soft_struct.size;
+        size = main_soft.size;
         width = std::get<0>(size);
         height = std::get<1>(size);
 
-        root_element_struct = *main_soft_struct.home;
+        root_element = *main_soft.home;
 
         screen_width = DisplayWidth(display, screen);
         screen_height = DisplayHeight(display, screen);
@@ -81,7 +81,7 @@ namespace driver {
         buffer << file.rdbuf();
         std::string font_config = buffer.str(); 
         nlohmann::json font_json = nlohmann::json::parse(font_config);
-        std::string font_family_name = main_soft_struct.font_family;
+        std::string font_family_name = main_soft.font_family;
         default_font_family = font_json["font_families"][font_family_name].get<std::string>();
         FT_Init_FreeType(&library);
         if (FT_New_Face(library, (exe_dir / "resources" / "fonts" / default_font_family).string().c_str(), 0, &ft_face) != 0) {
@@ -108,7 +108,7 @@ namespace driver {
         XSetNormalHints(display, window, &hints);
 
         elementObject = std::make_shared<element::Element>(
-            display, window,default_font_family, screen, root_element_struct
+            display, window,default_font_family, screen, root_element
         );
 
         cairo_surface_t *surface = cairo_xlib_surface_create(display, window,

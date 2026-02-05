@@ -19,9 +19,9 @@ namespace fs = std::filesystem;
 
 HWND hwnd;
 HFONT hFont;
-soft::types::SoftStruct main_soft_struct;
-soft::types::ElementStruct root_element_struct;
-std::string default_font_family = "Noto Serif SC";
+soft::types::Soft main_soft;
+soft::types::Element root_element;
+std::string default_font_family = "Arial";
 fs::path exe_dir;
 
 std::string GetExeParentDirString() {
@@ -83,15 +83,24 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
+        case WM_SIZE:
+        {
+            InvalidateRect(hwnd, NULL, TRUE);
+            UpdateWindow(hwnd);
+            break;
+        }
         case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
+
             RECT rect;
             GetClientRect(hwnd, &rect);
-            HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
 
-            element::Element::draw(root_element_struct, default_font_family, hdc, rect);
+            HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+            int oldBkMode = SetBkMode(hdc, TRANSPARENT);
+
+            element::Element::draw(root_element, default_font_family, hdc, rect);
             
             SelectObject(hdc, hOldFont);
             
@@ -129,17 +138,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         init();
 
         py::module_ main = py::module_::import("lib.main");
-        py::object main_soft = main.attr("main")();
+        py::object main_soft_object = main.attr("main")();
 
-        soft::types::init_soft_struct(main_soft, main_soft_struct);
-        root_element_struct = *main_soft_struct.home;
+        main_soft = soft::types::Soft(main_soft_object);
+        root_element = *main_soft.home;
 
-        if (main_soft_struct.title.length() > 30)
+        if (main_soft.title.length() > 30)
         {
             return 1;
         }
 
-        std::string font_family_name = main_soft_struct.font_family;
+        std::string font_family_name = main_soft.font_family;
 
         std::ifstream file(exe_dir / "config" / "font.json");
         std::stringstream buffer;
@@ -179,8 +188,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         hFont = CreateFontW(
             -font_size,
-            0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
             DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
             utils::utf8_to_wstring(font_family_name).c_str()
         );
@@ -193,7 +202,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             return 1;
         }
 
-        std::wstring title = utils::utf8_to_wstring(main_soft_struct.title);
+        std::wstring title = utils::utf8_to_wstring(main_soft.title);
 
         if (!title.empty())
         {
@@ -202,7 +211,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             SetWindowTextW(hwnd, title_buffer);
         }
 
-        py::tuple size = main_soft.attr("size").cast<py::tuple>();
+        py::tuple size = main_soft_object.attr("size").cast<py::tuple>();
         int width = size[0].cast<int>();
         int height = size[1].cast<int>();
 

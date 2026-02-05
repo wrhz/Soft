@@ -1,2 +1,4 @@
+packaging==26.0
 pybind11==3.0.1
+requirements-parser==0.13.0
 setuptools==80.9.0

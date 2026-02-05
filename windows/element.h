@@ -11,7 +11,7 @@
 namespace element {
     class Element {
     public:
-        static void draw(soft::types::ElementStruct root_element, std::string font_family, HDC hdc, RECT rect);
+        static void draw(soft::types::Element root_element, std::string font_family, HDC hdc, RECT rect);
     };
 }
 

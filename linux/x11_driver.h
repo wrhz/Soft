@@ -18,13 +18,13 @@ namespace driver {
         X11Driver();
         ~X11Driver();
         
-        int init(soft::types::SoftStruct main_soft_struct);
+        int init(soft::types::Soft main_soft);
         void run();
         void finish();
         
     private:
-        soft::types::SoftStruct main_soft_struct;
-        soft::types::ElementStruct root_element_struct;
+        soft::types::Soft main_soft;
+        soft::types::Element root_element;
         std::tuple<int, int> size;
         Window window;
         Display* display;

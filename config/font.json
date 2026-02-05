@@ -1,6 +1,6 @@
 {
     "font_families": {
-        "Noto Serif SC" : "NOTOSERIFSC-VF.TTF"
+        "Arial" : "ARIALBD.TTF"
     },
-    "font_size": 35
+    "font_size": 15
 }

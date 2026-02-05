@@ -1,11 +1,12 @@
 #include "element.h"
 #include "soft/types.h"
 #include "style.h"
+#include <cairo/cairo.h>
 #include <string>
 
 namespace element
 {
-    Element::Element(Display* display, Window window, std::string font_family, int screen, soft::types::ElementStruct root_element)
+    Element::Element(Display* display, Window window, std::string font_family, int screen, soft::types::Element root_element)
     {
         this->display = display;
         this->window = window;
@@ -39,7 +40,10 @@ namespace element
             style = returnStyle(width, height, font_size, text, style_object, cr);
             
             cairo_move_to(cr, style.x, style.y);
+
             cairo_show_text(cr, text.c_str());
+
+            cairo_stroke(cr);
         }
 
         cairo_destroy(cr);

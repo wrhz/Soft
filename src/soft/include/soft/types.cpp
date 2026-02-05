@@ -2,7 +2,7 @@
 #include <vector>
 
 namespace soft::types {
-    void init_element_struct(py::object element, ElementStruct& element_struct)
+    Element::Element(py::object element)
     {
         py::dict element_dict;
         
@@ -18,11 +18,11 @@ namespace soft::types {
             py::handle value = item.second;
             if (key == "tag")
             {
-                element_struct.tag = value.cast<std::string>();
+                tag = value.cast<std::string>();
             }
             else if (key == "text")
             {
-                element_struct.text = value.cast<std::string>();
+                text = value.cast<std::string>();
             }
             else if (key == "style")
             {
@@ -30,27 +30,25 @@ namespace soft::types {
                 {
                     std::string style_key = style_item.first.cast<std::string>();
                     std::string style_value = style_item.second.cast<std::string>();
-                    element_struct.style[style_key] = style_value;
+                    style[style_key] = style_value;
                 }
             }
             else if (key == "children")
             {
                 for (auto child : value)
                 {
-                    ElementStruct* child_struct = new ElementStruct();
-                    init_element_struct(child.cast<py::dict>(), *child_struct);
-                    element_struct.children.push_back(child_struct);
+                    Element child_struct(child.cast<py::dict>());
+                    children.push_back(&child_struct);
                 }
             }
         }
     }
 
-    void init_soft_struct(py::object soft, SoftStruct& soft_struct)
+    Soft::Soft(py::object soft)
     {
-        soft_struct.title = soft.attr("title").cast<std::string>();
-        soft_struct.size = soft.attr("size").cast<std::tuple<int, int>>();
-        soft_struct.font_family = soft.attr("font_family").cast<std::string>();
-        soft_struct.home = new ElementStruct();
-        init_element_struct(soft.attr("home")().attr("element"), *soft_struct.home);
+        title = soft.attr("title").cast<std::string>();
+        size = soft.attr("size").cast<std::tuple<int, int>>();
+        font_family = soft.attr("font_family").cast<std::string>();
+        home = new Element(soft.attr("home")().attr("element"));
     }
 }

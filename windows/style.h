@@ -12,7 +12,7 @@ namespace style {
 
     class Style {
     public:
-        static void handle_style(HDC hdc, RECT rect, std::map<std::string, std::string> styles, StyleStruct& style_struct);
+        static void handle_style(std::map<std::string, std::string> styles, StyleStruct& style_struct);
     };
 }
 

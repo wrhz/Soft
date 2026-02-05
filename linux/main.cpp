@@ -108,13 +108,12 @@ int main(int argc, char* argv[])
         init();
 
         py::module_ main_module = py::module_::import("lib.main");
-        py::object mainSoft = main_module.attr("main")();
+        py::object main_soft = main_module.attr("main")();
 
         if (use_driver == 1)
         {
             auto run_driver = std::make_unique<driver::X11Driver>();
-            soft::types::SoftStruct main_soft_struct;
-            soft::types::init_soft_struct(mainSoft, main_soft_struct);
+            soft::types::Soft main_soft_struct(main_soft);
             int result = run_driver->init(main_soft_struct);
             if (result != 0)
             {

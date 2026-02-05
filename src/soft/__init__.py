@@ -5,12 +5,13 @@ class Soft:
     __size = (800, 600)
     __home: None | Element = None
     __routes: dict = {}
-    __default_font_family: str = "Noto Serif SC"
+    __default_font_family: str = "Arial"
 
-    def __init__(self, home, title: str = "Soft Windows", size: tuple[int, int] = (800, 600)):
+    def __init__(self, home, title: str = "Soft Windows", size: tuple[int, int] = (800, 600), font_family: str = "Arial"):
         self.__home = home
         self.__size = size
         self.title = title
+        self.__default_font_family = font_family
 
     def set_home(self, home):
         self.__home = home

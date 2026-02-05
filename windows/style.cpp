@@ -2,7 +2,7 @@
 
 namespace style
 {
-    void Style::handle_style(HDC hdc, RECT rect, std::map<std::string, std::string> styles, StyleStruct& style_struct)
+    void Style::handle_style(std::map<std::string, std::string> styles, StyleStruct& style_struct)
     {
         for (auto item : styles)
         {
