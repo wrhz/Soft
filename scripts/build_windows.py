@@ -75,13 +75,10 @@ def build_windows(python_home, project_dir):
         if not os.path.exists(exe_dir + "\\python"):
             extract_zip(os.path.join(project_dir, "python", "windows-python.zip"), exe_dir)
             subprocess.run([os.path.join(exe_dir, "python", "python.exe"), "get-pip.py"], cwd=os.path.join(exe_dir, "python"))
-
-        if not os.path.exists(os.path.join(exe_dir, "packages")):
-            os.makedirs(os.path.join(exe_dir, "packages"))
         
-        subprocess.run(["robocopy", os.path.join(project_dir, "config"), os.path.join(exe_dir, "config"), "/E", "/XJ", "/R:0", "/W:0"], cwd=project_dir)
-        subprocess.run(["robocopy", os.path.join(project_dir, "resources"), os.path.join(exe_dir, "resources"), "/E", "/XJ", "/R:0", "/W:0"], cwd=project_dir)
-        subprocess.run(["robocopy", os.path.join(project_dir, "packages", "windows"), os.path.join(exe_dir, "packages"), "/E", "/XJ", "/R:0", "/W:0"], cwd=project_dir)
+        shutil.copytree(os.path.join(project_dir, "config"), os.path.join(exe_dir, "config"))
+        shutil.copytree(os.path.join(project_dir, "resources"), os.path.join(exe_dir, "resources"))
+        shutil.copytree(os.path.join(project_dir, "packages", "windows"), os.path.join(exe_dir, "packages"))
         build_modules(os.path.join(project_dir, "src"), exe_dir, "python")
         build_modules(os.path.join(project_dir, "lib"), exe_dir, "python")
 

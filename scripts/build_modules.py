@@ -15,4 +15,4 @@ def build_modules(dir_path, exe_dir, python_exe):
             subprocess.run([python_exe, "-m", "compileall", "-b", os.path.join(output_path, module)], cwd=exe_dir)
             os.remove(os.path.join(output_path, module))
         else:
-            shutil.copy(path, exe_dir)
+            shutil.copy2(path, output_path)

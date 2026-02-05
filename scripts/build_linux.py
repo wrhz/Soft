@@ -84,8 +84,8 @@ def build_linux(project_dir):
             for otherFile in other:
                 cmd.append(otherFile)
 
-        subprocess.run(["cp", "-r", os.path.join(project_dir, "config"), os.path.join(x86_64_dir, "config")])
-        subprocess.run(["cp", "-r", os.path.join(project_dir, "resources"), os.path.join(x86_64_dir, "resources")])
+        shutil.copytree(os.path.join(project_dir, "config"), os.path.join(x86_64_dir, "config"))
+        shutil.copytree(os.path.join(project_dir, "resources"), os.path.join(x86_64_dir, "resources"))
 
         build_modules(os.path.join(project_dir, "src"), x86_64_dir, "python3")
         build_modules(os.path.join(project_dir, "lib"), x86_64_dir, "python3")
