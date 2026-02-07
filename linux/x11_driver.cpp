@@ -2,6 +2,7 @@
 #include "element.h"
 #include "freetype/freetype.h"
 #include "nlohmann/json.hpp"
+#include <X11/X.h>
 #include <X11/Xutil.h>
 #include <pybind11/pytypes.h>
 #include <thread>
@@ -43,7 +44,7 @@ namespace driver {
         display = XOpenDisplay(NULL);
         if (display == NULL)
         {
-            std::cerr << "无法打开X11显示" << std::endl;
+            std::cerr << "Cannot open X11 display" << std::endl;
             return 1;
         }
 
@@ -96,7 +97,7 @@ namespace driver {
         XStoreName(display, window, title.length() == 0 ? "Soft Linux" : title.c_str());
 
         XSetWindowAttributes attrs;
-        attrs.event_mask = ExposureMask | KeyPressMask | ButtonPressMask;
+        attrs.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask;
         XChangeWindowAttributes(display, window, CWEventMask, &attrs);
         
         XSizeHints hints;
@@ -129,7 +130,7 @@ namespace driver {
     void X11Driver::run()
     {
         if (!display || !window) {
-            std::cerr << "窗口未正确初始化" << std::endl;
+            std::cerr << "Window not initialized correctly" << std::endl;
             return;
         }
 
@@ -149,8 +150,13 @@ namespace driver {
                 XNextEvent(display, &event);
                 
                 switch (event.type) {
+                    case ConfigureNotify:
+                        width = event.xconfigure.width;
+                        height = event.xconfigure.height;
+                        py::print(1);
+                        break;
                     case Expose:
-                        (*elementObject).draw(width, height, font_size, cairo_face);
+                        (*elementObject).draw(width,height, font_size, cairo_face);
                         break;
                     case KeyPress:
                     case ButtonPress:

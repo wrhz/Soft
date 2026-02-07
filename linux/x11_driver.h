@@ -3,6 +3,7 @@
 
 #include <string>
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <tuple>
 #include <cairo/cairo-ft.h>
 #include <filesystem>

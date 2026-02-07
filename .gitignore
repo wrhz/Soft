@@ -6,3 +6,4 @@ server/
 python/web-python.tar.bz2
 .clangd
 *.obj
+android/
