@@ -153,7 +153,6 @@ namespace driver {
                     case ConfigureNotify:
                         width = event.xconfigure.width;
                         height = event.xconfigure.height;
-                        py::print(1);
                         break;
                     case Expose:
                         (*elementObject).draw(width,height, font_size, cairo_face);

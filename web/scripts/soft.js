@@ -65,15 +65,13 @@ function createElements(elementMap) {
 
     await unzip("/src.zip", "src");
     await unzip("/lib.zip", "lib");
-
     await pyodide.runPythonAsync(`
         import sys
+        import os
 
         sys.path.append("/lib/python3.12/site-packages/src")
         sys.path.append("/lib/python3.12/site-packages/lib")
-    `);
 
-    await pyodide.runPythonAsync(`
         import lib.main as main
 
         soft = main.main()
