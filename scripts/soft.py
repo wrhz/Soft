@@ -21,6 +21,9 @@ elif sys.argv[2] == "linux":
     from build_linux import build_linux
 
     build_linux(project_dir)
+elif sys.argv[2] == "android":
+    from build_android import build_android
+    build_android(project_dir)
 elif sys.argv[2] == "web":
     sys.path.append(os.path.join(project_dir, "packages", "web"))
     from build_web import build_web

@@ -15,14 +15,13 @@ def build_windows(python_home, project_dir):
 
         files = {
             *get_files(os.path.join(project_dir, "windows"), remove_files=["main.cpp"]),
-            *get_files(os.path.join(project_dir, "src", "soft", "include"))
+            *get_files(os.path.join(project_dir, "src", "cpp"))
         }
 
         includePaths = [
             os.path.join(project_dir, "packages", "windows", "pybind11", "include"),
             os.path.join(python_home, "include"),
-            os.path.join(project_dir, "src", "soft", "include"),
-            os.path.join(project_dir, "src")
+            os.path.join(project_dir, "src", "cpp")
         ]
 
         libPaths = [
@@ -79,7 +78,8 @@ def build_windows(python_home, project_dir):
         shutil.copytree(os.path.join(project_dir, "config"), os.path.join(exe_dir, "config"))
         shutil.copytree(os.path.join(project_dir, "resources"), os.path.join(exe_dir, "resources"))
         shutil.copytree(os.path.join(project_dir, "packages", "windows"), os.path.join(exe_dir, "packages"))
-        build_modules(os.path.join(project_dir, "src"), exe_dir, "python")
+        for dir in os.listdir(os.path.join(project_dir, "src", "python")):
+            build_modules(os.path.join(project_dir, "src", "python", dir), os.path.join(exe_dir, "src"), "python")
         build_modules(os.path.join(project_dir, "lib"), exe_dir, "python")
 
         subprocess.run(cmd, cwd=cpp_dir)

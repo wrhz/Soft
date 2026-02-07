@@ -14,15 +14,14 @@ def build_linux(project_dir):
 
         files = {
             *get_files(os.path.join(project_dir, "linux"), remove_files=["main.cpp", "x11_driver.cpp", "wayland_driver.cpp"]),
-            *get_files(os.path.join(project_dir, "src", "soft", "include"))
+            *get_files(os.path.join(project_dir, "src", "cpp"))
         }
 
         includePaths = [
             f"{project_dir}/packages/pybind11/include/pybind11",
             f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}",
             "/usr/include/freetype2",
-            os.path.join(project_dir, "src", "soft", "include"),
-            os.path.join(project_dir, "src")
+            os.path.join(project_dir, "src", "cpp"),
         ]
 
         libPaths = [
@@ -87,7 +86,8 @@ def build_linux(project_dir):
         shutil.copytree(os.path.join(project_dir, "config"), os.path.join(x86_64_dir, "config"))
         shutil.copytree(os.path.join(project_dir, "resources"), os.path.join(x86_64_dir, "resources"))
 
-        build_modules(os.path.join(project_dir, "src"), x86_64_dir, "python3")
+        for dir in os.listdir(os.path.join(project_dir, "src", "python")):
+            build_modules(os.path.join(project_dir, "src", "python", dir), os.path.join(x86_64_dir, "src"), "python3")
         build_modules(os.path.join(project_dir, "lib"), x86_64_dir, "python3")
 
         os.chdir(cpp_dir)
