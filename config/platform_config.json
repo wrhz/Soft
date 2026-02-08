@@ -1,0 +1,16 @@
+{
+    "windows": {
+        "width": 800,
+        "height": 600
+    },
+    "linux": {
+        "width": 800,
+        "height": 600
+    },
+    "web": {
+
+    },
+    "android": {
+
+    }
+}

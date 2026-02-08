@@ -32,6 +32,9 @@ namespace utils {
 
     void console_log(const fs::path dir_path, const std::string log)
     {
+        if (!fs::exists(dir_path))
+            fs::create_directories(dir_path);
+
         std::ofstream log_file(dir_path / "log.txt", std::ios_base::app);
         log_file << "Error: " << log << std::endl;
         log_file.close();

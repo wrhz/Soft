@@ -59,6 +59,8 @@ function createElements(elementMap) {
 }
 
 (async function() {
+    const soft_config = await GetFile.getFileJson("/config/soft.json");
+
     const packages = await GetFile.getFileJson("/packages.json");
 
     await pyodide.loadPackage(packages);
@@ -86,7 +88,7 @@ function createElements(elementMap) {
 
     document.getElementById("loading")?.remove();
 
-    document.getElementsByTagName("title")[0].textContent = soft.title;
+    document.getElementsByTagName("title")[0].textContent = soft_config.title;
 
     const globalStyle = document.getElementById("global-style");
 

@@ -1,3 +1,4 @@
+#include <string>
 #define UNICODE
 #define _UNICODE
 
@@ -5,14 +6,13 @@
 #include <wingdi.h>
 #include <shlwapi.h>
 #include <filesystem>
-#include <fstream>
 
 #include "pybind11/embed.h"
-#include "nlohmann/json.hpp"
 
 #include "element.h"
 #include "utils.h"
 #include "soft/types.h"
+#include "soft/get_json.h"
 
 namespace py = pybind11;
 namespace fs = std::filesystem;
@@ -23,6 +23,8 @@ soft::types::Soft main_soft;
 soft::types::Element root_element;
 std::string default_font_family = "Arial";
 fs::path exe_dir;
+nlohmann::json soft_config = soft::get_json::file_get_json(exe_dir / "config" / "soft.json");
+nlohmann::json platform_config = soft::get_json::file_get_json(exe_dir / "config" / "platform_config.json")["windows"];
 
 std::string GetExeParentDirString() {
     wchar_t exePath[MAX_PATH] = { 0 };
@@ -143,21 +145,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         main_soft = soft::types::Soft(main_soft_object);
         root_element = *main_soft.home;
 
-        if (main_soft.title.length() > 30)
+        std::wstring title = utils::utf8_to_wstring(soft_config["title"]);
+
+        if (title.length() > 30)
         {
             return 1;
         }
 
         std::string font_family_name = main_soft.font_family;
 
-        std::ifstream file(exe_dir / "config" / "font.json");
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-        std::string font_config = buffer.str(); 
-        nlohmann::json font_json = nlohmann::json::parse(font_config);
+        nlohmann::json font_config = soft::get_json::file_get_json(exe_dir / "config" / "font.json");
 
-        default_font_family = font_json["font_families"][font_family_name].get<std::string>();
-        int font_size = font_json["font_size"].get<int>();
+        default_font_family = font_config["font_families"][font_family_name];
+        int font_size = font_config["font_size"];
 
         AddFontResourceEx((exe_dir / "resources" / "fonts" / default_font_family).wstring().c_str(), FR_PRIVATE, NULL);
 
@@ -179,7 +179,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         
         hwnd = CreateWindowW(
             className,
-            L"Soft Windows",
+            L"Soft Application",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT,
             640, 480,
@@ -202,8 +202,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             return 1;
         }
 
-        std::wstring title = utils::utf8_to_wstring(main_soft.title);
-
         if (!title.empty())
         {
             wchar_t title_buffer[31];
@@ -211,9 +209,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             SetWindowTextW(hwnd, title_buffer);
         }
 
-        py::tuple size = main_soft_object.attr("size").cast<py::tuple>();
-        int width = size[0].cast<int>();
-        int height = size[1].cast<int>();
+        int width = platform_config["width"];
+        int height = platform_config["height"];
 
         RECT rcWorkArea;
         SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWorkArea, 0);

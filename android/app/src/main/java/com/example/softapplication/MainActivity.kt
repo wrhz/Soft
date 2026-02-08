@@ -1,31 +1,30 @@
 package com.example.softapplication
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.example.softapplication.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var py: Python;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(applicationContext))
         }
-        val py = Python.getInstance()
+        py = Python.getInstance()
 
-        val module = py.getModule("module");
+        val init = py.getModule("init");
+        init.callAttr("init")
 
-        // Example of a call to a native method
-        binding.sampleText.text = module.callAttr("func").toString();
+        val main = py.getModule("lib.main")
     }
 
     /**

@@ -9,6 +9,7 @@
 #include <filesystem>
 #include "element.h"
 #include "soft/types.h"
+#include "nlohmann/json.hpp"
 
 namespace fs = std::filesystem;
 
@@ -24,9 +25,10 @@ namespace driver {
         void finish();
         
     private:
+        nlohmann::json soft_config;
+        nlohmann::json platform_config;
         soft::types::Soft main_soft;
         soft::types::Element root_element;
-        std::tuple<int, int> size;
         Window window;
         Display* display;
         std::shared_ptr<element::Element> elementObject;

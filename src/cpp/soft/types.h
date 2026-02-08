@@ -23,11 +23,9 @@ namespace soft::types {
 
     class Soft {
     public:
-        Soft() : title("Soft Windows"), size(std::make_tuple(800, 600)), home(nullptr), font_family("Segoe UI Variable") {}
+        Soft() : home(nullptr), font_family("Segoe UI Variable") {}
         Soft(py::object soft);
 
-        std::string title = "Soft Windows";
-        std::tuple<int, int> size = std::make_tuple(800, 600);
         Element* home = nullptr;
         std::vector<std::function<Element*()>> routes = {};
         std::string font_family = "Segoe UI Variable";

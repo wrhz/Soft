@@ -1,24 +1,24 @@
 #include "x11_driver.h"
 #include "element.h"
 #include "freetype/freetype.h"
-#include "nlohmann/json.hpp"
+#include "soft/get_json.h"
 #include <X11/X.h>
 #include <X11/Xutil.h>
 #include <pybind11/pytypes.h>
 #include <thread>
 #include <iostream>
-#include <fstream>
 #include <sys/auxv.h>
 
 namespace driver {
     X11Driver::X11Driver() 
-    : main_soft(),
+    : soft_config(),
+      platform_config(),
+      main_soft(),
       root_element(),
-      size(),
       window(0),
       display(nullptr),
       elementObject(nullptr),
-      title("Soft Linux"),
+      title("Soft Application"),
       default_font_family(),
       width(800),
       height(600),
@@ -41,6 +41,9 @@ namespace driver {
     {
         exe_dir = fs::path((char*)getauxval(AT_EXECFN)).parent_path();
 
+        soft_config = soft::get_json::file_get_json(exe_dir / "config" / "soft.json");
+        platform_config = soft::get_json::file_get_json(exe_dir / "config" / "platform_config.json")["linux"];
+
         display = XOpenDisplay(NULL);
         if (display == NULL)
         {
@@ -51,16 +54,15 @@ namespace driver {
         screen = DefaultScreen(display);
 
         this->main_soft = main_soft;
-        title = main_soft.title;
+        title = soft_config["title"];
         if (title.length() > 30)
         {
             std::cerr << "The title length is not greater than 30" << std::endl;
             return 1;
         }
 
-        size = main_soft.size;
-        width = std::get<0>(size);
-        height = std::get<1>(size);
+        width = platform_config["width"];
+        height = platform_config["height"];
 
         root_element = *main_soft.home;
 
@@ -77,13 +79,9 @@ namespace driver {
             WhitePixel(display, screen)
         );
 
-        std::ifstream file((exe_dir / "config" / "font.json").string());
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-        std::string font_config = buffer.str(); 
-        nlohmann::json font_json = nlohmann::json::parse(font_config);
+        nlohmann::json font_config = soft::get_json::file_get_json(exe_dir / "config" / "font.json");
         std::string font_family_name = main_soft.font_family;
-        default_font_family = font_json["font_families"][font_family_name].get<std::string>();
+        default_font_family = font_config["font_families"][font_family_name].get<std::string>();
         FT_Init_FreeType(&library);
         if (FT_New_Face(library, (exe_dir / "resources" / "fonts" / default_font_family).string().c_str(), 0, &ft_face) != 0) {
             std::cerr << "Error Cannot load font file: " 
@@ -92,9 +90,9 @@ namespace driver {
             return 1;
         }
         cairo_face = cairo_ft_font_face_create_for_ft_face(ft_face, 0);
-        font_size = font_json["font_size"].get<int>();
+        font_size = font_config["font_size"];
 
-        XStoreName(display, window, title.length() == 0 ? "Soft Linux" : title.c_str());
+        XStoreName(display, window, title.length() == 0 ? "Soft Application" : title.c_str());
 
         XSetWindowAttributes attrs;
         attrs.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask;

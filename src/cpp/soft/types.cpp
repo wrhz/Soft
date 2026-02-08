@@ -46,8 +46,6 @@ namespace soft::types {
 
     Soft::Soft(py::object soft)
     {
-        title = soft.attr("title").cast<std::string>();
-        size = soft.attr("size").cast<std::tuple<int, int>>();
         font_family = soft.attr("font_family").cast<std::string>();
         home = new Element(soft.attr("home")().attr("element"));
     }
