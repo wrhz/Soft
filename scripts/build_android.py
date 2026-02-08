@@ -1,6 +1,8 @@
 import os
 import subprocess
 import shutil
+import json
+import xml.etree.ElementTree as ET
 from build_modules import build_modules
 from get_platform import get_platform
 
@@ -11,7 +13,7 @@ def build_android(project_dir):
         python = "python"
 
     not_remove_files_and_dirs = [
-        "app.py"
+        "init.py"
     ]
 
     android_python_dir = os.path.join(project_dir, "android", "app", "src", "main", "python")
@@ -23,5 +25,17 @@ def build_android(project_dir):
             else:
                 shutil.rmtree(os.path.join(android_python_dir, file))
 
-    build_modules(os.path.join(project_dir, "src", "python"), os.path.dirname(android_python_dir), python)
-    build_modules(os.path.join(project_dir, "lib"), android_python_dir, python)
+    build_modules(os.path.join(project_dir, "src", "python"), os.path.dirname(android_python_dir), python, False)
+    build_modules(os.path.join(project_dir, "lib"), android_python_dir, python, False)
+
+    with open(os.path.join(project_dir, "config", "soft.json"), "r") as f:
+        soft_config = json.load(f)
+
+    with open(os.path.join(project_dir, "android", "app", "src", "main", "res", "values", "strings.xml"), "r") as f:
+        tree = ET.parse(f)
+        root = tree.getroot()
+        target = root.find('.//*[@name="app_name"]')
+        if target is not None:
+            target.text = soft_config["title"]
+        
+    tree.write(os.path.join(project_dir, "android", "app", "src", "main", "res", "values", "strings.xml"), encoding="utf-8", xml_declaration=True)
