@@ -2,6 +2,7 @@
 #include "element.h"
 #include "freetype/freetype.h"
 #include "soft/get_json.h"
+#include "soft/types.h"
 #include <X11/X.h>
 #include <X11/Xutil.h>
 #include <pybind11/pytypes.h>
@@ -14,10 +15,9 @@ namespace driver {
     : soft_config(),
       platform_config(),
       main_soft(),
-      root_element(),
+      page(),
       window(0),
       display(nullptr),
-      elementObject(nullptr),
       title("Soft Application"),
       default_font_family(),
       width(800),
@@ -54,6 +54,7 @@ namespace driver {
         screen = DefaultScreen(display);
 
         this->main_soft = main_soft;
+        page = main_soft.home;
         title = soft_config["title"];
         if (title.length() > 30)
         {
@@ -63,8 +64,6 @@ namespace driver {
 
         width = platform_config["width"];
         height = platform_config["height"];
-
-        root_element = *main_soft.home;
 
         screen_width = DisplayWidth(display, screen);
         screen_height = DisplayHeight(display, screen);
@@ -80,8 +79,8 @@ namespace driver {
         );
 
         nlohmann::json font_config = soft::get_json::file_get_json(exe_dir / "config" / "font.json");
-        std::string font_family_name = main_soft.font_family;
-        default_font_family = font_config["font_families"][font_family_name].get<std::string>();
+        std::string default_font_family_name = main_soft.default_font_family;
+        default_font_family = font_config["font_families"][default_font_family_name].get<std::string>();
         FT_Init_FreeType(&library);
         if (FT_New_Face(library, (exe_dir / "resources" / "fonts" / default_font_family).string().c_str(), 0, &ft_face) != 0) {
             std::cerr << "Error Cannot load font file: " 
@@ -105,10 +104,6 @@ namespace driver {
         hints.width = width;
         hints.height = height;
         XSetNormalHints(display, window, &hints);
-
-        elementObject = std::make_shared<element::Element>(
-            display, window,default_font_family, screen, root_element
-        );
 
         cairo_surface_t *surface = cairo_xlib_surface_create(display, window,
                                                 DefaultVisual(display, screen),
@@ -152,9 +147,19 @@ namespace driver {
                         width = event.xconfigure.width;
                         height = event.xconfigure.height;
                         break;
-                    case Expose:
-                        (*elementObject).draw(width,height, font_size, cairo_face);
+                    case Expose: {
+                        soft::types::Element* root_element = new soft::types::Element(main_soft.home().attr("element"));
+
+                        element::Element element = element::Element(
+                            display, window, default_font_family, screen, root_element
+                        );
+
+                        element.draw(width, height, font_size, cairo_face);
+
+                        delete root_element;
+
                         break;
+                    }
                     case KeyPress:
                     case ButtonPress:
                         running = false;

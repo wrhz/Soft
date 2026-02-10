@@ -24,5 +24,5 @@ class Soft:
         return self.__routes
     
     @property
-    def font_family(self) -> str:
+    def default_font_family(self) -> str:
         return self.__default_font_family

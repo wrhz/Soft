@@ -5,6 +5,16 @@
       <config />
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml">
+        <config>
+          <theme>@style/Theme.SoftApplication</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_foreground.xml">
+        <config>
+          <theme>@style/Theme.SoftApplication</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
         <config>
           <theme>@style/Theme.SoftApplication</theme>
@@ -17,8 +27,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62d76c9d-f7f2-46f1-abf3-2c49d4bb2558" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/FileManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/FontJson.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/SoftData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/python/init.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/python/soft/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/soft/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/python/soft/elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/soft/elements.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../linux/element.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/element.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../linux/element.h" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/element.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../linux/x11_driver.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/x11_driver.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../linux/x11_driver.h" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/x11_driver.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/cpp/soft/types.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/cpp/soft/types.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/cpp/soft/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/cpp/soft/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/python/soft/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../src/python/soft/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/python/soft/elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/../src/python/soft/elements.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web/scripts/soft.js" beforeDir="false" afterPath="$PROJECT_DIR$/../web/scripts/soft.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/element.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/element.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/element.h" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/element.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/element.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/element.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/main.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/main.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/style.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/style.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/types.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/types.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../windows/utils.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../windows/utils.obj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +66,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=AHAFCP3A28411067)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=Default, isTemplate=false, identifier=serial=192.168.3.5:41881;connection=06b9a9fb)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -45,6 +83,14 @@
         </projects_view>
       </state>
     </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Data Class" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -63,6 +109,7 @@
     "Android App.app.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
@@ -160,17 +207,28 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.example.softapplication">
           <value>
-            <CheckInfo lastCheckTimestamp="1770546486027" />
+            <CheckInfo lastCheckTimestamp="1770723568268" />
           </value>
         </entry>
         <entry key="com.example.softapplication.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1770546486027" />
+            <CheckInfo lastCheckTimestamp="1770723568268" />
           </value>
         </entry>
       </map>

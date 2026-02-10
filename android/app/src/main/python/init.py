@@ -1,5 +1,5 @@
-import sys
 import os
-
+import sys
+                
 def init():
-    sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'lib'))
+    sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))

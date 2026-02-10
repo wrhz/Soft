@@ -1,6 +1,7 @@
 #ifndef SOFT_TYPES_H
 #define SOFT_TYPES_H
 
+#include "pybind11/pytypes.h"
 #include <map>
 #include <string>
 #include <tuple>
@@ -23,12 +24,12 @@ namespace soft::types {
 
     class Soft {
     public:
-        Soft() : home(nullptr), font_family("Segoe UI Variable") {}
+        Soft() : home(), default_font_family("Arial") {}
         Soft(py::object soft);
 
-        Element* home = nullptr;
+        py::object home;
         std::vector<std::function<Element*()>> routes = {};
-        std::string font_family = "Segoe UI Variable";
+        std::string default_font_family = "Arial";
     };
 }
 

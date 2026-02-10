@@ -28,10 +28,9 @@ namespace driver {
         nlohmann::json soft_config;
         nlohmann::json platform_config;
         soft::types::Soft main_soft;
-        soft::types::Element root_element;
+        py::object page;
         Window window;
         Display* display;
-        std::shared_ptr<element::Element> elementObject;
         std::string title;
         std::string default_font_family;
         int width;

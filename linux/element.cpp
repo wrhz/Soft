@@ -6,7 +6,7 @@
 
 namespace element
 {
-    Element::Element(Display* display, Window window, std::string font_family, int screen, soft::types::Element root_element)
+    Element::Element(Display* display, Window window, std::string font_family, int screen, soft::types::Element* root_element)
     {
         this->display = display;
         this->window = window;
@@ -30,12 +30,12 @@ namespace element
 
         cairo_set_font_face(cr, cairo_face);
 
-        std::string tag = root_element.tag;
-        std::map<std::string, std::string> style_object = root_element.style;
+        std::string tag = root_element->tag;
+        std::map<std::string, std::string> style_object = root_element->style;
         style::StyleStruct style;
         if (tag == "text")
         {
-            std::string text = root_element.text;
+            std::string text = root_element->text;
 
             style = returnStyle(width, height, font_size, text, style_object, cr);
             

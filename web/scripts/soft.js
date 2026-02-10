@@ -42,6 +42,11 @@ function handleStyles(element, styles) {
 }
 
 function createElements(elementMap) {
+    elementMap = elementMap().element.toJs({
+        dict_converter: Object.fromEntries,
+        create_proxies: false
+    });
+
     let element;
 
     switch (elementMap.tag) {
@@ -81,10 +86,7 @@ function createElements(elementMap) {
 
     const soft = pyodide.globals.get("soft");
 
-    const element = pyodide.globals.get("soft").home().element.toJs({
-        dict_converter: Object.fromEntries,
-        create_proxies: false
-    });
+    const element = pyodide.globals.get("soft").home;
 
     document.getElementById("loading")?.remove();
 
@@ -92,7 +94,7 @@ function createElements(elementMap) {
 
     const globalStyle = document.getElementById("global-style");
 
-    const defaut_font_family = soft.font_family;
+    const defaut_font_family = soft.default_font_family;
 
     const font_config = await GetFile.getFileJson("/config/font.json");
 

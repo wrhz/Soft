@@ -46,7 +46,7 @@ namespace soft::types {
 
     Soft::Soft(py::object soft)
     {
-        font_family = soft.attr("font_family").cast<std::string>();
-        home = new Element(soft.attr("home")().attr("element"));
+        default_font_family = soft.attr("default_font_family").cast<std::string>();
+        home = soft.attr("home");
     }
 }

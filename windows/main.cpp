@@ -1,3 +1,4 @@
+#include "pybind11/pytypes.h"
 #include <string>
 #define UNICODE
 #define _UNICODE
@@ -20,9 +21,9 @@ namespace fs = std::filesystem;
 HWND hwnd;
 HFONT hFont;
 soft::types::Soft main_soft;
-soft::types::Element root_element;
 std::string default_font_family = "Arial";
 fs::path exe_dir;
+py::object page;
 nlohmann::json soft_config = soft::get_json::file_get_json(exe_dir / "config" / "soft.json");
 nlohmann::json platform_config = soft::get_json::file_get_json(exe_dir / "config" / "platform_config.json")["windows"];
 
@@ -83,38 +84,46 @@ void init()
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    switch (uMsg)
+    try {
+        switch (uMsg)
+        {
+            case WM_SIZE:
+            {
+                InvalidateRect(hwnd, NULL, TRUE);
+                UpdateWindow(hwnd);
+                break;
+            }
+            case WM_PAINT:
+            {
+                PAINTSTRUCT ps;
+                HDC hdc = BeginPaint(hwnd, &ps);
+
+                RECT rect;
+                GetClientRect(hwnd, &rect);
+
+                HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+                int oldBkMode = SetBkMode(hdc, TRANSPARENT);
+
+                soft::types::Element* root_element = new soft::types::Element(page().attr("element"));
+                element::Element::draw(root_element, default_font_family, hdc, rect);
+                delete root_element;
+                
+                SelectObject(hdc, hOldFont);
+                
+                EndPaint(hwnd, &ps);
+                return 0;
+            }
+            case WM_DESTROY:
+            {
+                PostQuitMessage(0);
+                FreeConsole();
+                return 0;
+            }
+        }
+    }
+    catch (const std::exception& e)
     {
-        case WM_SIZE:
-        {
-            InvalidateRect(hwnd, NULL, TRUE);
-            UpdateWindow(hwnd);
-            break;
-        }
-        case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-
-            RECT rect;
-            GetClientRect(hwnd, &rect);
-
-            HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
-            int oldBkMode = SetBkMode(hdc, TRANSPARENT);
-
-            element::Element::draw(root_element, default_font_family, hdc, rect);
-            
-            SelectObject(hdc, hOldFont);
-            
-            EndPaint(hwnd, &ps);
-            return 0;
-        }
-        case WM_DESTROY:
-        {
-            PostQuitMessage(0);
-            FreeConsole();
-            return 0;
-        }
+        utils::console_log(exe_dir, e.what());
     }
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
@@ -143,7 +152,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         py::object main_soft_object = main.attr("main")();
 
         main_soft = soft::types::Soft(main_soft_object);
-        root_element = *main_soft.home;
+
+        page = main_soft.home;
 
         std::wstring title = utils::utf8_to_wstring(soft_config["title"]);
 
@@ -152,11 +162,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             return 1;
         }
 
-        std::string font_family_name = main_soft.font_family;
+        std::string default_font_family_name = main_soft.default_font_family;
 
         nlohmann::json font_config = soft::get_json::file_get_json(exe_dir / "config" / "font.json");
-
-        default_font_family = font_config["font_families"][font_family_name];
+        default_font_family = font_config["font_families"][default_font_family_name];
         int font_size = font_config["font_size"];
 
         AddFontResourceEx((exe_dir / "resources" / "fonts" / default_font_family).wstring().c_str(), FR_PRIVATE, NULL);
@@ -191,7 +200,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
             DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
             DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-            utils::utf8_to_wstring(font_family_name).c_str()
+            utils::utf8_to_wstring(default_font_family_name).c_str()
         );
 
         SendMessageW(hwnd, WM_SETFONT, (WPARAM)hFont, TRUE);

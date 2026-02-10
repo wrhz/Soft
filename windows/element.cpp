@@ -1,15 +1,16 @@
 #include "element.h"
 #include "style.h"
+#include "utils.h"
 
-void element::Element::draw(soft::types::Element root_element, std::string font_family, HDC hdc, RECT rect)
+void element::Element::draw(soft::types::Element* root_element, std::string font_family, HDC hdc, RECT rect)
 {
-    std::map<std::string, std::string> style_object = root_element.style;
+    std::map<std::string, std::string> style_object = root_element->style;
     style::StyleStruct style;
     style::Style::handle_style(style_object, style);
-    std::string tag = root_element.tag;
+    std::string tag = root_element->tag;
     if (tag == "text")
     {
-        std::wstring text = utils::utf8_to_wstring(root_element.text);
+        std::wstring text = utils::utf8_to_wstring(root_element->text);
         DrawTextW(hdc, text.c_str(), -1, &rect, style.format_style);
     }
 }
