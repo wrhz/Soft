@@ -4,4 +4,4 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
 
-python3 "$PARENT_DIR/scripts/softpm-linux.py" "$@"
+python3 "$PARENT_DIR/scripts/softpm_linux.py" "$@"
