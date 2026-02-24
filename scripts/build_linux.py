@@ -40,7 +40,7 @@ def build_linux(project_dir):
 
         cmd = [
             "g++",
-            "-std=c++17",
+            "-std=c++20",
             "-o",
             x86_64_path,
             "main.cpp",
