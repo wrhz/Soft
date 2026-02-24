@@ -4,14 +4,16 @@
 #include <Windows.h>
 #include <map>
 
-#include "style.h"
+#include "soft/style.h"
 #include "utils.h"
 #include "soft/types.h"
+#include "yoga/Yoga.h"
 
 namespace element {
     class Element {
     public:
-        static void draw(soft::types::Element* root_element, std::string font_family, HDC hdc, RECT rect);
+        static void set_style(YGNodeRef parent_node, soft::types::Element& element, HDC hdc);
+        static void draw(soft::types::Element element, std::string font_family, HDC hdc, RECT rect, HFONT hFont);
     };
 }
 

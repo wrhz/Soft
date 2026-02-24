@@ -1,10 +1,20 @@
-from soft.elements import Text
+from soft.elements import Text, View
 from soft.style import Style
 
 def hello():
     style = Style(
-        horizontal_align="center",
-        vertical_align="middle"
+        display = "flex",
+        flex_direction = "column",
+        align_items = "center",
+        justify_content = "center",
     )
 
-    return Text("Hello Soft!", style=style)
+    return View(
+        Text(
+            "Hello Soft!"
+        ),
+        Text(
+            "Hello Soft!"
+        ),
+        style=style,
+    )

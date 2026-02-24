@@ -1,7 +1,6 @@
 import GetFile from "./getFile.js";
 
 var pyodide = await loadPyodide();
-const view = document.getElementById("view");
 
 async function unzip(zip_path, extract_path) {
     pyodide.FS.writeFile(zip_path, new Uint8Array(await GetFile.getFileArrayBuffer(zip_path)));
@@ -18,31 +17,60 @@ function handleStyles(element, styles) {
         const value = styles[key];
 
         switch (key) {
-            case "horizontal_align":
-                if (value === "right") {
-                    element.style.justifyContent = "flex-end";
-                } else if (value === "left") {
-                    element.style.justifyContent = "flex-start";
-                } else {
-                    element.style.justifyContent = "center";
-                }
+            case "display":
+                element.style.display = value;
                 break;
-
-            case "vertical_align":
-                if (value === "top") {
-                    element.style.alignItems = "flex-start";
-                } else if (value === "bottom") {
-                    element.style.alignItems = "flex-end";
-                } else {
-                    element.style.alignItems = "center";
-                }
+            case "flex_direction":
+                element.style.flexDirection = value;
                 break;
+            case "flex_grow":
+                element.style.flexGrow = value;
+                break;
+            case "flex_wrap":
+                element.style.flexWrap = value;
+                break;
+            case "justify_content":
+                element.style.justifyContent = value;
+                break;
+            case "align_items":
+                element.style.alignItems = value;
+                break;
+            case "margin":
+                element.style.margin = value;
+                break;
+            case "margin_top":
+                element.style.marginTop = value;
+                break;
+            case "margin_right":
+                element.style.marginRight = value;
+                break;
+            case "margin_bottom":
+                element.style.marginBottom = value;
+                break;
+            case "margin_left":
+                element.style.marginLeft = value;
+            case "padding":
+                element.style.padding = value;
+                break;
+            case "padding_top":
+                element.style.paddingTop = value;
+                break;
+            case "padding_right":
+                element.style.paddingRight = value;
+                break;
+            case "padding_bottom":
+                element.style.paddingBottom = value;
+                break;
+            case "padding_left":
+                element.style.paddingLeft = value;
+            case _:
+                console.error(`Unknown style: ${key}`);
         }
     });
 }
 
-function createElements(elementMap) {
-    elementMap = elementMap().element.toJs({
+function createElements(elementMap, parentElement = document.body) {
+    elementMap = elementMap.element.toJs({
         dict_converter: Object.fromEntries,
         create_proxies: false
     });
@@ -54,13 +82,20 @@ function createElements(elementMap) {
             element = document.createElement("p");
             element.textContent = elementMap.text;
             break;
+        case "view":
+            element = document.createElement("div");
+            break;
         default:
             throw new Error(`Unknown tag: ${elementMap.tag}`);
     }
 
     handleStyles(element, elementMap.style);
 
-    view.appendChild(element);
+    elementMap.children.forEach((child) => {
+        createElements(child, element);
+    });
+
+    parentElement.appendChild(element);
 }
 
 (async function() {
@@ -68,7 +103,14 @@ function createElements(elementMap) {
 
     const packages = await GetFile.getFileJson("/packages.json");
 
-    await pyodide.loadPackage(packages);
+    await pyodide.loadPackage("micropip");
+
+    await pyodide.runPythonAsync(`
+        import micropip
+
+        for package in ${JSON.stringify(packages)}:
+            await micropip.install(package);
+    `);
 
     await unzip("/src.zip", "src");
     await unzip("/lib.zip", "lib");
@@ -114,16 +156,13 @@ function createElements(elementMap) {
 
     globalStyle.textContent += `
         * {
-            margin: 0;
+            margin: 5;
             padding: 0;
-            width: 100vw;
-            height: 100vh;
-            min-height: 100vh;
             font-family: "${defaut_font_family}";
             font-weight: bold;
             font-size: ${font_config.font_size}px;
         }
     `
 
-    createElements(element);
+    createElements(element());
 }) ()

@@ -1,5 +1,7 @@
-#include "pybind11/pytypes.h"
-#include <string>
+#include "soft/style.h"
+#include "yoga/YGConfig.h"
+#include "yoga/YGNode.h"
+#include "yoga/YGNodeStyle.h"
 #define UNICODE
 #define _UNICODE
 
@@ -26,6 +28,7 @@ fs::path exe_dir;
 py::object page;
 nlohmann::json soft_config = soft::get_json::file_get_json(exe_dir / "config" / "soft.json");
 nlohmann::json platform_config = soft::get_json::file_get_json(exe_dir / "config" / "platform_config.json")["windows"];
+YGNodeRef root_node = nullptr;
 
 std::string GetExeParentDirString() {
     wchar_t exePath[MAX_PATH] = { 0 };
@@ -89,6 +92,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             case WM_SIZE:
             {
+                YGNodeStyleSetWidth(root_node, (float)LOWORD(lParam));
+                YGNodeStyleSetHeight(root_node, (float)HIWORD(lParam));
                 InvalidateRect(hwnd, NULL, TRUE);
                 UpdateWindow(hwnd);
                 break;
@@ -105,7 +110,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 int oldBkMode = SetBkMode(hdc, TRANSPARENT);
 
                 soft::types::Element* root_element = new soft::types::Element(page().attr("element"));
-                element::Element::draw(root_element, default_font_family, hdc, rect);
+                element::Element::set_style(root_node, *root_element, hdc);
+
+                YGNodeCalculateLayout(root_node, float(rect.right - rect.left), float(rect.bottom - rect.top), YGDirectionLTR);
+
+                element::Element::draw(*root_element, default_font_family, hdc, rect, hFont);
                 delete root_element;
                 
                 SelectObject(hdc, hOldFont);
@@ -143,6 +152,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         });
 
         SetDllDirectoryA((exe_dir / "python").string().c_str());
+
+        root_node = YGNodeNew();
 
         py::scoped_interpreter guard{};
 
@@ -220,6 +231,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         int width = platform_config["width"];
         int height = platform_config["height"];
+
+        YGNodeStyleSetWidth(root_node, width);
+        YGNodeStyleSetHeight(root_node, height);
 
         RECT rcWorkArea;
         SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWorkArea, 0);
