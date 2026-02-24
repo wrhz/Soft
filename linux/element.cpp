@@ -1,68 +1,59 @@
 #include "element.h"
 #include "soft/types.h"
-#include "style.h"
+#include "yoga/YGNodeLayout.h"
 #include <cairo/cairo.h>
 #include <string>
 
 namespace element
 {
-    Element::Element(Display* display, Window window, std::string font_family, int screen, soft::types::Element* root_element)
+    void Element::set_style(cairo_t *cr, YGNodeRef parent_node, soft::types::Element& element)
     {
-        this->display = display;
-        this->window = window;
-        this->font_family = font_family;
-        this->screen = screen;
-        this->root_element = root_element;
+        element.node = YGNodeNew();
+        soft::style::Style::handle_style(element.node, element.style);
+        std::string tag = element.tag;
+
+        if (tag == "text")
+        {
+            cairo_text_extents_t extents;
+            cairo_text_extents(cr, element.text.c_str(), &extents);
+
+            float x = float(extents.width) - extents.x_bearing;
+            float y = float(extents.height) - extents.y_bearing;
+
+            YGNodeStyleSetWidth(element.node, x);
+            YGNodeStyleSetHeight(element.node, y);
+        }
+
+        YGNodeInsertChild(parent_node, element.node, YGNodeGetChildCount(parent_node));
+
+        for (auto& child_element : element.children)
+        {
+            element::Element::set_style(cr, element.node, child_element);
+        }
     }
 
-    void Element::draw(int width, int height, int font_size, cairo_font_face_t *cairo_face)
+    void Element::draw(cairo_t *cr, int width, int height, int font_size, cairo_font_face_t *cairo_face, Display* display, Window window, std::string font_family, int screen, soft::types::Element* _element)
     {
-        cairo_surface_t *surface = cairo_xlib_surface_create(display, window,
-                                                DefaultVisual(display, screen),
-                                                width, height);
-        cairo_t *cr = cairo_create(surface);
-
         cairo_set_source_rgb(cr, 1, 1, 1);
 
         cairo_set_source_rgb(cr, 0, 0, 0);
 
-        cairo_set_font_size(cr, font_size);
-
-        cairo_set_font_face(cr, cairo_face);
-
-        std::string tag = root_element->tag;
-        std::map<std::string, std::string> style_object = root_element->style;
-        style::StyleStruct style;
+        std::string tag = _element->tag;
+        
         if (tag == "text")
         {
-            std::string text = root_element->text;
-
-            style = returnStyle(width, height, font_size, text, style_object, cr);
+            std::string text = _element->text;
             
-            cairo_move_to(cr, style.x, style.y);
+            cairo_move_to(cr, YGNodeLayoutGetLeft(_element->node), YGNodeLayoutGetTop(_element->node) + YGNodeLayoutGetHeight(_element->node));
 
             cairo_show_text(cr, text.c_str());
 
             cairo_stroke(cr);
         }
 
-        cairo_destroy(cr);
-        cairo_surface_destroy(surface);
-    }
-
-    style::StyleStruct Element::returnStyle(int width, int height, int font_size, std::string text, std::map<std::string, std::string> style_object, cairo_t* cr)
-    {
-        style::StyleStruct style;
-        if (!style_object.empty()) {
-            cairo_text_extents_t text_extents;
-            cairo_text_extents(cr, text.c_str(), &text_extents);
-            style = style::Style::handleStyle(width, height, font_size, text_extents.width, text_extents.height, style_object);
-        }
-        else
+        for (auto& child_element : _element->children)
         {
-            style.x = font_size;
+            element::Element::draw(cr, width, height, font_size, cairo_face, display, window, font_family, screen, &child_element);
         }
-
-        return style;
     }
 }

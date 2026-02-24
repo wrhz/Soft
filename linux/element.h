@@ -6,8 +6,8 @@
 #include <cairo/cairo-ft.h>
 #include <list>
 
-#include "style.h"
 #include "soft/types.h"
+#include "soft/style.h"
 
 namespace element
 {
@@ -15,17 +15,8 @@ namespace element
     {
     public:
         Element();
-        Element(Display* display, Window window, std::string font_family, int screen, soft::types::Element* root_element);
-        void draw(int width, int height, int font_size, cairo_font_face_t *cairo_face);
-
-    private:
-        Display* display;
-        Window window;
-        std::string font_family;
-        int screen;
-        soft::types::Element* root_element;
-
-        style::StyleStruct returnStyle(int width, int height, int font_size, std::string text, std::map<std::string, std::string> style_object, cairo_t* cr);
+        static void set_style(cairo_t *cr, YGNodeRef parent_node, soft::types::Element& element);
+        static void draw(cairo_t *cr, int width, int height, int font_size, cairo_font_face_t *cairo_face, Display* display, Window window, std::string font_family, int screen, soft::types::Element* _element);
     };
 }
 

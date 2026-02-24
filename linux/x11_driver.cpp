@@ -3,6 +3,7 @@
 #include "freetype/freetype.h"
 #include "soft/get_json.h"
 #include "soft/types.h"
+#include "yoga/YGNode.h"
 #include <X11/X.h>
 #include <X11/Xutil.h>
 #include <pybind11/pytypes.h>
@@ -15,6 +16,7 @@ namespace driver {
     : soft_config(),
       platform_config(),
       main_soft(),
+      root_node(YGNodeNew()),
       page(),
       window(0),
       display(nullptr),
@@ -64,6 +66,9 @@ namespace driver {
 
         width = platform_config["width"];
         height = platform_config["height"];
+
+        YGNodeStyleSetWidth(root_node, width);
+        YGNodeStyleSetHeight(root_node, height);
 
         screen_width = DisplayWidth(display, screen);
         screen_height = DisplayHeight(display, screen);
@@ -146,15 +151,30 @@ namespace driver {
                     case ConfigureNotify:
                         width = event.xconfigure.width;
                         height = event.xconfigure.height;
+                        YGNodeStyleSetWidth(root_node, width);
+                        YGNodeStyleSetHeight(root_node, height);
                         break;
                     case Expose: {
                         soft::types::Element* root_element = new soft::types::Element(main_soft.home().attr("element"));
 
-                        element::Element element = element::Element(
-                            display, window, default_font_family, screen, root_element
-                        );
+                        cairo_surface_t *surface = cairo_xlib_surface_create(display, window,
+                                                DefaultVisual(display, screen),
+                                                width, height);
 
-                        element.draw(width, height, font_size, cairo_face);
+                        cairo_t *cr = cairo_create(surface);
+
+                        cairo_set_font_size(cr, font_size);
+
+                        cairo_set_font_face(cr, cairo_face);
+
+                        element::Element::set_style(cr, root_node, *root_element);
+
+                        YGNodeCalculateLayout(root_node, float(width), float(height), YGDirectionLTR);
+
+                        element::Element::draw(cr, width, height, font_size, cairo_face, display, window, default_font_family, screen, root_element);
+
+                        cairo_destroy(cr);
+                        cairo_surface_destroy(surface);
 
                         delete root_element;
 

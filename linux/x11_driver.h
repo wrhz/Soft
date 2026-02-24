@@ -10,6 +10,8 @@
 #include "element.h"
 #include "soft/types.h"
 #include "nlohmann/json.hpp"
+#include "yoga/YGConfig.h"
+#include "yoga/Yoga.h"
 
 namespace fs = std::filesystem;
 
@@ -28,6 +30,7 @@ namespace driver {
         nlohmann::json soft_config;
         nlohmann::json platform_config;
         soft::types::Soft main_soft;
+        YGNodeRef root_node;
         py::object page;
         Window window;
         Display* display;
