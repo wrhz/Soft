@@ -21,7 +21,7 @@ def build_linux(project_dir):
             f"{project_dir}/packages/pybind11/include/pybind11",
             f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}",
             "/usr/include/freetype2",
-            os.path.join(project_dir, "src", "cpp"),
+            os.path.join(project_dir, "src", "cpp", "private"),
         ]
 
         libPaths = [

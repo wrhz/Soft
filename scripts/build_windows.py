@@ -21,11 +21,11 @@ def build_windows(python_home, project_dir):
         includePaths = [
             os.path.join(project_dir, "packages", "windows", "pybind11", "include"),
             os.path.join(python_home, "include"),
-            os.path.join(project_dir, "src", "cpp")
+            os.path.join(project_dir, "src", "cpp", "private"),
         ]
 
         libPaths = [
-            os.path.join(python_home, "libs")
+            os.path.join(python_home, "libs"),
         ]
 
         libFiles = [
@@ -38,10 +38,11 @@ def build_windows(python_home, project_dir):
         cmd = [
             "cl",
             "/EHsc",
-            "/std:c++17",
+            "/std:c++20",
             "/Zi",
             f"/Fe:{os.path.join(project_dir, "build", "windows", "main.exe")}",
             f"/Fd:{os.path.join(project_dir, "build", "windows", "main.pdb")}",
+            f"/Fo:{os.path.join(project_dir, "build", "windows", "obj/")}",
             "main.cpp"
         ]
 
@@ -56,6 +57,9 @@ def build_windows(python_home, project_dir):
                     os.remove(os.path.join(project_dir, "build", "windows", file))
                 else:
                     shutil.rmtree(os.path.join(project_dir, "build", "windows", file))
+
+        if not os.path.exists(os.path.join(project_dir, "build", "windows", "obj")):
+            os.makedirs(os.path.join(project_dir, "build", "windows", "obj"))
 
         if len(files) > 0:
             for file in files:

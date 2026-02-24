@@ -23,7 +23,6 @@ def zip_folder(folder_path, output_path):
 def build_web(project_dir):
     try:
         html_dir = os.path.join(project_dir, "build", "web")
-        pyodide_path = os.path.join(project_dir, "python", "web-python.tar.bz2")
         platform = get_platform()
 
         if not os.path.exists(html_dir):
@@ -36,13 +35,7 @@ def build_web(project_dir):
                     else:
                         os.remove(os.path.join(html_dir, file))
 
-        if not os.path.exists(os.path.join(html_dir, "pyodide")):
-            shutil.unpack_archive(pyodide_path, html_dir)
-
         for file in os.listdir(os.path.join(project_dir, "web")):
-            if file in ["pyodide"]:
-                continue
-
             if os.path.isdir(os.path.join(project_dir, "web", file)):
                 shutil.copytree(os.path.join(project_dir, "web", file), os.path.join(html_dir, file))
             else:
@@ -66,9 +59,8 @@ def build_web(project_dir):
         shutil.rmtree(os.path.join(html_dir, "src"))
         shutil.rmtree(os.path.join(html_dir, "lib"))
         
-        soft_packages = set(get_packages_with_parser(os.path.join(project_dir, "softpm_requirements.txt")))
-        pyodide_packages = set(json.load(open(os.path.join(html_dir, "pyodide", "pyodide-lock.json")))["packages"].keys())
-        json.dump(list(soft_packages & pyodide_packages), open(os.path.join(html_dir, "packages.json"), "w"), indent=4)
+        soft_packages = get_packages_with_parser(os.path.join(project_dir, "softpm_requirements.txt"))
+        json.dump(soft_packages, open(os.path.join(html_dir, "packages.json"), "w"), indent=4)
 
         webbrowser.open(f"http://localhost:8000/index.html")
         subprocess.run(["python", "-m", "http.server"], cwd=html_dir)
