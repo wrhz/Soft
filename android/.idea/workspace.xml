@@ -27,12 +27,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62d76c9d-f7f2-46f1-abf3-2c49d4bb2558" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/Style.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/pages/hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/pages/hello.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python/web-python.tar.bz2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/python/soft/elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/../src/python/soft/elements.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../web/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/scripts/soft.js" beforeDir="false" afterPath="$PROJECT_DIR$/../web/scripts/soft.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/python/lib/pages/hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/lib/pages/hello.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/python/soft/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/soft/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/python/soft/elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/soft/elements.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/python/soft/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../src/python/soft/__init__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +46,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=Default, isTemplate=false, identifier=serial=192.168.3.5:40679;connection=c7b4d115)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -95,6 +99,7 @@
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Projects/Soft/Soft-main/android&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }

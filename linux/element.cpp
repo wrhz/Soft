@@ -1,6 +1,7 @@
 #include "element.h"
 #include "soft/types.h"
 #include "yoga/YGNodeLayout.h"
+#include "yoga/YGNodeStyle.h"
 #include <cairo/cairo.h>
 #include <string>
 
@@ -9,6 +10,7 @@ namespace element
     void Element::set_style(cairo_t *cr, YGNodeRef parent_node, soft::types::Element& element)
     {
         element.node = YGNodeNew();
+
         soft::style::Style::handle_style(element.node, element.style);
         std::string tag = element.tag;
 

@@ -1,14 +1,50 @@
 package com.example.softapplication
 
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.util.Log
 import android.view.Gravity
 import com.chaquo.python.PyObject
+import com.facebook.yoga.YogaEdge
+import com.facebook.yoga.YogaNode
+import com.facebook.yoga.YogaNodeFactory
 
 class ElementData {
-    var tag: String? = null
-    var text: String? = null
-    var children: MutableList<ElementData> = mutableListOf()
-    var style: Int = Gravity.START or Gravity.TOP
+    lateinit var tag: String
+    lateinit var text: String
+    val children: MutableList<ElementData> = mutableListOf()
+    val style: MutableMap<String, String> = mutableMapOf()
+    val node: YogaNode = YogaNodeFactory.create()
+
+    companion object {
+        fun setStyle(parentNode: YogaNode, element: ElementData, typeface: Typeface?, fontSize: Float) {
+            Style.handleStyle(element.node, element.style)
+            val tag: String = element.tag
+
+            when (tag) {
+                "text" -> {
+                    val paint = Paint().apply {
+                        this.textSize = fontSize
+                        this.typeface = typeface ?: Typeface.DEFAULT_BOLD
+                    }
+
+                    val width = paint.measureText(element.text)
+                    val fm = paint.fontMetrics
+                    val height = fm.bottom - fm.top
+
+                    element.node.setWidth(width)
+                    element.node.setHeight(height)
+                }
+            }
+
+            parentNode.addChildAt(element.node, parentNode.childCount)
+
+            for (child: ElementData in element.children) {
+                setStyle(element.node, child, typeface, fontSize)
+            }
+        }
+    }
 
     constructor(element: PyObject?) {
         if (element !== null) {
@@ -18,44 +54,17 @@ class ElementData {
                 elementMap[key.toString()] = value
             }
 
-            tag = elementMap["tag"]?.toString()
-            text = elementMap["text"]?.toString()
+            tag = elementMap["tag"]!!.toString()
+            text = elementMap["text"]!!.toString()
             val childrenList = elementMap["children"]?.asList()
             if (childrenList != null) {
                 for (child in childrenList) {
                     children.add(ElementData(child))
                 }
             }
-            style = handleStyle(elementMap["style"])
-        }
-    }
-
-    private fun handleStyle(style: PyObject?): Int {
-        if (style != null) {
-            var horizontalAlign: Int = Gravity.START;
-            var verticalAlign: Int = Gravity.TOP;
-            for (styleChild in style.asMap()) {
-                val key: String = styleChild.key.toString()
-                val value: String = styleChild.value.toString()
-
-                if (key == "horizontal_align") {
-                    horizontalAlign = when (value) {
-                        "right" -> Gravity.RIGHT
-                        "center" -> Gravity.CENTER_HORIZONTAL
-                        else -> Gravity.LEFT
-                    }
-                } else if (key == "vertical_align") {
-                    verticalAlign = when (value) {
-                        "bottom" -> Gravity.BOTTOM
-                        "middle" -> Gravity.CENTER_VERTICAL
-                        else -> Gravity.TOP
-                    }
-                }
+            for ((key, value) in elementMap["style"]!!.asMap()) {
+                style[key!!.toString()] = value!!.toString()
             }
-
-            return horizontalAlign or verticalAlign
         }
-
-        return Gravity.START or Gravity.TOP
     }
 }

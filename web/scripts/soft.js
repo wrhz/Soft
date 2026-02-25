@@ -13,6 +13,8 @@ async function unzip(zip_path, extract_path) {
 }
 
 function handleStyles(element, styles) {
+    element.style.margin = "5";
+
     Object.keys(styles).forEach((key) => {
         const value = styles[key];
 
