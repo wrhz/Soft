@@ -27,16 +27,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62d76c9d-f7f2-46f1-abf3-2c49d4bb2558" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/Style.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/python/lib/pages/hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/lib/pages/hello.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/python/soft/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/soft/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/python/soft/elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/python/soft/elements.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/python/soft/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../src/python/soft/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/pages/hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/pages/hello.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +38,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=Default, isTemplate=false, identifier=serial=192.168.3.5:40679;connection=c7b4d115)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=Default, isTemplate=false, identifier=serial=192.168.3.5:40679;connection=715926ae)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
