@@ -1,6 +1,7 @@
 build/
 __pycache__/
 .vscode/
+.idea/
 web/
 server/
 python/web-python.tar.bz2
