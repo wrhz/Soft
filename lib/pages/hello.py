@@ -1,5 +1,4 @@
-from soft.elements import Text, View
-from soft.style import Style
+from soft.elements import Text
 
 def hello():
     return Text(
