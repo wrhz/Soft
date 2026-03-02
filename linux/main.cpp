@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <iostream>
 #include <libgen.h>
+#include <register_modules.h>
 
 namespace py = pybind11;
 namespace fs = std::filesystem;
@@ -53,6 +54,8 @@ void init()
 
     fs::path packages_path = exe_dir / "packages";
     sys.attr("path").attr("append")(packages_path.string());
+
+    initialize_python_module();
 }
 
 std::string lower(std::string str)
@@ -129,6 +132,8 @@ int main(int argc, char* argv[])
             std::cerr << "Not found driver to using" << std::endl;
             return 1;
         }
+
+        uninitialize_python_module();
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

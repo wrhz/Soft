@@ -132,17 +132,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    /**
-     * A native method that is implemented by the 'softapplication' native library,
-     * which is packaged with this application.
-     */
-    external fun stringFromJNI(): String
-
-    companion object {
-        // Used to load the 'softapplication' library on application startup.
-        init {
-            System.loadLibrary("softapplication")
-        }
-    }
 }

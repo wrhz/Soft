@@ -1,7 +1,3 @@
-#include "soft/style.h"
-#include "yoga/YGConfig.h"
-#include "yoga/YGNode.h"
-#include "yoga/YGNodeStyle.h"
 #define UNICODE
 #define _UNICODE
 
@@ -9,6 +5,7 @@
 #include <wingdi.h>
 #include <shlwapi.h>
 #include <filesystem>
+#include <register_modules.h>
 
 #include "pybind11/embed.h"
 
@@ -83,6 +80,8 @@ void init()
     sys.attr("stderr") = io_module.attr("open")(
         "CONOUT$", "w", -1, "utf-8", "replace", "\n", true, true
     );
+
+    initialize_python_module();
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -258,6 +257,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     {
         utils::console_log(exe_dir, e.what());
     }
+
+    YGNodeFree(root_node);
+    uninitialize_python_module();
     
     return 0;
 }

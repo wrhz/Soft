@@ -4,4 +4,6 @@ CompileFlags:
         - -DX11
         - -I/usr/include/python3.12
         - -I../src/cpp/private
+        - -I../src/cpp/public
+        - -I../extension
         - -I/usr/include/freetype2

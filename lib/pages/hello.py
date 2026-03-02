@@ -1,6 +1,8 @@
 from soft.elements import Text, View
 from soft.style import Style
 
+import example_module
+
 def hello():
     style = Style(
         display = "flex",
@@ -8,6 +10,8 @@ def hello():
         align_items = "center",
         justify_content = "center",
     )
+
+    print(example_module.hello())
 
     return View(
         Text(

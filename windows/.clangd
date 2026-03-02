@@ -11,6 +11,7 @@ CompileFlags:
         - -target x86_64-pc-windows-msvc
         - -U__GNUC__
         - -Wno-microsoft-include
-        - /I../packages/windows/pybind11/include
         - /ID:/soft/Python3/include
         - /I../src/cpp/private
+        - /I../src/cpp/public
+        - /I../extension

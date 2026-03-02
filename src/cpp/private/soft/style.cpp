@@ -1,5 +1,4 @@
 #include "style.h"
-#include "YGNodeStyle.h"
 
 namespace soft::style
 {
