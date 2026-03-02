@@ -1,3 +1,0 @@
-D:/Projects/Soft/Soft-main/windows_build/CMakeFiles/app.dir
-D:/Projects/Soft/Soft-main/windows_build/CMakeFiles/edit_cache.dir
-D:/Projects/Soft/Soft-main/windows_build/CMakeFiles/rebuild_cache.dir

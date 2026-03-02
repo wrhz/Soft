@@ -4,6 +4,7 @@ __pycache__/
 .idea/
 web/
 server/
+cmake/*
 python/web-python.tar.bz2
 .clangd
 *.obj
