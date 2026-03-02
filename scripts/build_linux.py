@@ -5,55 +5,50 @@ import platform
 import shutil
 from get_files import get_files
 from build_modules import build_modules
+from write_cmake import write_cmake
 
 def build_linux(project_dir):
     try:
-        x86_64_path = os.path.join(project_dir, "build", "linux", "main")
+        x86_64_path = os.path.join(project_dir, "build", "linux", "app")
         x86_64_dir = os.path.dirname(x86_64_path)
         cpp_dir = os.path.join(project_dir, "linux")
 
         files = {
             *get_files(os.path.join(project_dir, "linux"), remove_files=["main.cpp", "x11_driver.cpp", "wayland_driver.cpp"]),
-            *get_files(os.path.join(project_dir, "src", "cpp"))
+            *get_files(os.path.join(project_dir, "src", "cpp")),
+            *get_files(os.path.join(project_dir, "extension")),
         }
 
-        includePaths = [
-            f"{project_dir}/packages/pybind11/include/pybind11",
+        public_include_paths = [
+            os.path.join(project_dir, "src", "cpp", "public"),
+            os.path.join(project_dir, "extension"),
+        ]
+
+        private_include_paths = [
             f"/usr/include/python{platform.python_version().split('.')[0]}.{platform.python_version().split('.')[1]}",
             "/usr/include/freetype2",
             os.path.join(project_dir, "src", "cpp", "private"),
         ]
 
-        libPaths = [
-            
+        lib_paths = [
+            "/usr/lib/x86_64-linux-gnu",
         ]
 
-        libFiles = [
+        lib_files = [
             "freetype",
-            "cairo"
+            "cairo",
+            "libpython3.12.so"
         ]
 
-        other = [
-            " -Wno-attributes",
-            "$(python3-config --libs --embed)"
-        ]
-
-        cmd = [
-            "g++",
-            "-std=c++20",
-            "-o",
-            x86_64_path,
-            "main.cpp",
-        ]
+        defines = []
 
         soft_linux_driver = os.environ.get("SOFT_LINUX_DRIVER", "X11")
         if soft_linux_driver.upper() == "X11":
-            files.add("x11_driver.cpp")
-            libFiles.append("X11")
-            other.append("-DX11")
+            files.add("linux/x11_driver.cpp")
+            lib_files.append("X11")
+            defines.append("X11")
         elif soft_linux_driver.lower() == "wayland":
-            files.add("wayland_driver.cpp")
-            other.append("$(pkg-config --cflags --libs wayland-client++)")
+            files.add("linux/wayland_driver.cpp")
         else:
             print(f"Invalid driver: {soft_linux_driver}")
             exit(1)
@@ -67,22 +62,6 @@ def build_linux(project_dir):
                 else:
                     os.remove(os.path.join(project_dir, "build", "linux", file))
 
-        if len(files) > 0:
-            for file in files:
-                cmd.append(file)
-        if len(includePaths) > 0:
-            for includePath in includePaths:
-                cmd.append(f"-I{includePath}")
-        if len(libPaths) > 0:
-            for libPath in libPaths:
-                cmd.append(f"-L{libPath}")
-        if len(libFiles) > 0:
-            for libFile in libFiles:
-                cmd.append(f"-l{libFile}")
-        if len(other) > 0:
-            for otherFile in other:
-                cmd.append(otherFile)
-
         shutil.copytree(os.path.join(project_dir, "config"), os.path.join(x86_64_dir, "config"))
         shutil.copytree(os.path.join(project_dir, "resources"), os.path.join(x86_64_dir, "resources"))
 
@@ -90,9 +69,13 @@ def build_linux(project_dir):
             build_modules(os.path.join(project_dir, "src", "python", dir), os.path.join(x86_64_dir, "src"), "python3")
         build_modules(os.path.join(project_dir, "lib"), x86_64_dir, "python3")
 
-        os.chdir(cpp_dir)
-        os.system(" ".join(cmd))
+        with open(os.path.join(project_dir, "cmake", "linux.cmake"), "w") as f:
+            write_cmake(f, files, private_include_paths, public_include_paths, lib_paths, lib_files, defines)
+
+        subprocess.run(["cmake", "../..", "-G", "Ninja"], cwd=x86_64_dir)
+        subprocess.run(["ninja"], cwd=x86_64_dir)
+
         if sys.argv[1] == "run":
-            subprocess.run([x86_64_path, "--driver", soft_linux_driver], cwd=x86_64_dir)
+            subprocess.run([x86_64_path], cwd=x86_64_dir)
     except Exception as e:
         print(f"Error: {e}")

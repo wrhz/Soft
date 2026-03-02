@@ -6,45 +6,46 @@ import shutil
 from extract_zip import extract_zip
 from get_files import get_files
 from build_modules import build_modules
+from write_cmake import write_cmake
 
 def build_windows(python_home, project_dir):
     try:
-        exe_path = os.path.join(project_dir, "build", "windows", "main.exe")
+        exe_path = os.path.join(project_dir, "build", "windows", "app.exe")
         exe_dir = os.path.dirname(exe_path)
-        cpp_dir = os.path.join(project_dir, "windows")
+
+        global files, includePaths, libPaths, libFiles
 
         files = {
             *get_files(os.path.join(project_dir, "windows"), remove_files=["main.cpp"]),
-            *get_files(os.path.join(project_dir, "src", "cpp"))
+            *get_files(os.path.join(project_dir, "src", "cpp")),
+            *get_files(os.path.join(project_dir, "extension")),
         }
 
-        includePaths = [
-            os.path.join(project_dir, "packages", "windows", "pybind11", "include"),
+        private_include_paths = [
             os.path.join(python_home, "include"),
             os.path.join(project_dir, "src", "cpp", "private"),
         ]
 
-        libPaths = [
+        public_include_paths = [
+            os.path.join(project_dir, "src", "cpp", "public"),
+            os.path.join(project_dir, "extension"),
+        ]
+
+        lib_paths = [
             os.path.join(python_home, "libs"),
         ]
 
-        libFiles = [
+        lib_files = [
             "user32.lib",
             "gdi32.lib",
             "shlwapi.lib",
             f"python{platform.python_version().split('.')[0]}{platform.python_version().split('.')[1]}.lib"
         ]
 
-        cmd = [
-            "cl",
-            "/EHsc",
-            "/std:c++20",
-            "/Zi",
-            f"/Fe:{os.path.join(project_dir, "build", "windows", "main.exe")}",
-            f"/Fd:{os.path.join(project_dir, "build", "windows", "main.pdb")}",
-            f"/Fo:{os.path.join(project_dir, "build", "windows", "obj/")}",
-            "main.cpp"
-        ]
+        defines = []
+
+        with open(os.path.join(project_dir, "cmake", "windows.cmake"), "w") as f:
+            write_cmake(f, files, private_include_paths, public_include_paths, lib_paths, lib_files, defines)
 
         if not os.path.exists(os.path.join(project_dir, "build", "windows")):
             os.makedirs(os.path.join(project_dir, "build", "windows"))
@@ -61,20 +62,6 @@ def build_windows(python_home, project_dir):
         if not os.path.exists(os.path.join(project_dir, "build", "windows", "obj")):
             os.makedirs(os.path.join(project_dir, "build", "windows", "obj"))
 
-        if len(files) > 0:
-            for file in files:
-                cmd.append(file)
-        if len(includePaths) > 0:
-            for includePath in includePaths:
-                cmd.append(f"/I{includePath}")
-        cmd.append("/link")
-        if len(libPaths) > 0:
-            for libPath in libPaths:
-                cmd.append(f"/LIBPATH:{libPath}")
-        if len(libFiles) > 0:
-            for libFile in libFiles:
-                cmd.append(libFile)
-
         if not os.path.exists(exe_dir + "\\python"):
             extract_zip(os.path.join(project_dir, "python", "windows-python.zip"), exe_dir)
             subprocess.run([os.path.join(exe_dir, "python", "python.exe"), "get-pip.py"], cwd=os.path.join(exe_dir, "python"))
@@ -86,7 +73,9 @@ def build_windows(python_home, project_dir):
             build_modules(os.path.join(project_dir, "src", "python", dir), os.path.join(exe_dir, "src"), "python")
         build_modules(os.path.join(project_dir, "lib"), exe_dir, "python")
 
-        subprocess.run(cmd, cwd=cpp_dir)
+        subprocess.run(["cmake", "../..", "-G", "Ninja"], cwd=exe_dir)
+        subprocess.run(["ninja"], cwd=exe_dir)
+
         if sys.argv[1] == "run":
             subprocess.run([exe_path], cwd=exe_dir)
     except Exception as e:

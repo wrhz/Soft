@@ -7,6 +7,25 @@ import zipfile
 from get_platform import get_platform
 from build_modules import build_modules
 from get_packages import get_packages_with_parser
+from pathlib import Path
+
+def build_extension(project_dir, output_dir):
+    for file in os.listdir(output_dir):
+        if file.endswith(".cpp"):
+            cmd = [
+                "emcc",
+                "-O3",
+                "-fPIC",
+                "-I" + os.path.join(project_dir, "src", "cpp", "public"),
+                "-I" + os.path.join(project_dir, "web", "include"),
+                "-shared",
+                file,
+                "-o",
+                Path(file).stem + ".js",
+                "-s",
+                "SIDE_MODULE=2",
+                "--no-entry",
+            ]
 
 def zip_folder(folder_path, output_path):
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
