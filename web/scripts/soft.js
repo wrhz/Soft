@@ -72,11 +72,6 @@ function handleStyles(element, styles) {
 }
 
 function createElements(elementMap, parentElement = document.body) {
-    elementMap = elementMap.element.toJs({
-        dict_converter: Object.fromEntries,
-        create_proxies: false
-    });
-
     let element;
 
     switch (elementMap.tag) {
@@ -112,6 +107,16 @@ function createElements(elementMap, parentElement = document.body) {
 
         for package in ${JSON.stringify(packages)}:
             await micropip.install(package);
+    `);
+
+    const initExtensionSo = await GetFile.getFileArrayBuffer("/init_extension.so");
+
+    pyodide.FS.writeFile("/lib/python3.12/init_extension.so", new Uint8Array(initExtensionSo));
+
+    await pyodide.runPythonAsync(`
+        import init_extension
+
+        init_extension.init()
     `);
 
     await unzip("/src.zip", "src");
@@ -166,5 +171,14 @@ function createElements(elementMap, parentElement = document.body) {
         }
     `
 
-    createElements(element());
+    createElements(element().element.toJs({
+        dict_converter: Object.fromEntries,
+        create_proxies: false
+    }));
+
+    await pyodide.runPythonAsync(`
+        import init_extension
+
+        init.uninit()
+    `);
 }) ()
