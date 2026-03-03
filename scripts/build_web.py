@@ -7,29 +7,34 @@ import zipfile
 from get_platform import get_platform
 from build_modules import build_modules
 from get_packages import get_packages_with_parser
-from pathlib import Path
+from get_files import get_files
 
-def build_extension(project_dir, output_dir):
-    for file in os.listdir(output_dir):
-        if file.endswith(".cpp"):
-            cmd = [
-                "emcc",
-                "-O3",
-                "-fPIC",
-                "-I" + os.path.join(project_dir, "src", "cpp", "public"),
-                "-I" + os.path.join(project_dir, "web", "include"),
-                "-shared",
-                file,
-                "-o",
-                Path(file).stem + ".js",
-                "-s",
-                "SIDE_MODULE=2",
-                "--no-entry",
-            ]
+def build_extension(project_dir, html_dir, file):
+    cmd = [
+        "emcc",
+        "-O3",
+        "-fPIC",
+        "-I" + os.path.join(project_dir, "src", "cpp", "public"),
+        "-I" + os.path.join(project_dir, "web", "include"),
+        "-I" + os.path.join(project_dir, "extension"),
+        "-shared",
+        os.path.join(project_dir, "web", "init_extension.cpp"),
+        *set(get_files(os.path.join(project_dir, "src", "cpp", "public")) + get_files(os.path.join(project_dir, "extension"))),
+        "-o",
+        os.path.join(html_dir, "init_extension.so"),
+        "-s",
+        "SIDE_MODULE=2",
+        "-s",
+        "EXPORTED_FUNCTIONS=[\"_PyInit_init_extension\"]",
+        "--no-entry",
+    ]
+
+    os.chdir(html_dir)
+    os.system(" ".join(cmd))
 
 def zip_folder(folder_path, output_path):
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, dirs, files in os.walk(folder_path):
+        for root,  _, files in os.walk(folder_path):
             rel_path = os.path.relpath(root, folder_path)
             if rel_path == '.':
                 rel_path = ''
@@ -56,7 +61,8 @@ def build_web(project_dir):
 
         for file in os.listdir(os.path.join(project_dir, "web")):
             if os.path.isdir(os.path.join(project_dir, "web", file)):
-                shutil.copytree(os.path.join(project_dir, "web", file), os.path.join(html_dir, file))
+                if file != "extension":
+                    shutil.copytree(os.path.join(project_dir, "web", file), os.path.join(html_dir, file))
             else:
                 shutil.copy2(os.path.join(project_dir, "web", file), os.path.join(html_dir, file))
 
@@ -71,6 +77,8 @@ def build_web(project_dir):
 
         shutil.copytree(os.path.join(project_dir, "config"), os.path.join(html_dir, "config"))
         shutil.copytree(os.path.join(project_dir, "resources"), os.path.join(html_dir, "resources"))
+
+        build_extension(project_dir, html_dir, "register_modules.cpp")
 
         zip_folder(os.path.join(html_dir, "src"), os.path.join(html_dir, "src.zip"))
         zip_folder(os.path.join(html_dir, "lib"), os.path.join(html_dir, "lib.zip"))
