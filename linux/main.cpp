@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        uninitialize_python_module();
+        destroy_python_module();
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

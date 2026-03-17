@@ -179,6 +179,6 @@ function createElements(elementMap, parentElement = document.body) {
     await pyodide.runPythonAsync(`
         import init_extension
 
-        init.uninit()
+        init_extension.destroy()
     `);
 }) ()

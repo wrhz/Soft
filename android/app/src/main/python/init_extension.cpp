@@ -5,5 +5,5 @@ PYBIND11_MODULE(init_extension, m)
 {
     m.def("init", &initialize_python_module);
 
-    m.def("uninit", &uninitialize_python_module);
+    m.def("destroy", &destroy_python_module);
 }

@@ -1,7 +1,8 @@
 from soft.elements import Text, View
 from soft.style import Style
+import os
 
-import example_module
+import example_module # type: ignore
 
 def hello():
     style = Style(

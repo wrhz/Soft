@@ -1,41 +1,27 @@
-set(APP_SOURCES
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/debug/Log.cpp"
-    "D:/Projects/Soft/Soft-main/extension/register_modules.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/algorithm/Cache.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/debug/AssertFatal.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGNodeStyle.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/config/Config.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGConfig.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGNode.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/soft/types.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/node/LayoutResults.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/algorithm/PixelGrid.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGPixelGrid.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/soft/style.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGNodeLayout.cpp"
-    "D:/Projects/Soft/Soft-main/extension/example_module.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGEnums.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/public/soft/classdb.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/event/event.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/algorithm/FlexLine.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/node/Node.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/soft/get_json.cpp"
-    "D:/Projects/Soft/Soft-main/windows/utils.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/algorithm/AbsoluteLayout.cpp"
-    "D:/Projects/Soft/Soft-main/windows/element.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/YGValue.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/algorithm/Baseline.cpp"
-    "D:/Projects/Soft/Soft-main/src/cpp/private/yoga/algorithm/CalculateLayout.cpp"
-)
+set(APP_SOURCES "")
+
+file(GLOB_RECURSE SRC_CPP "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/*.c")
+list(APPEND APP_SOURCES ${SRC_CPP})
+
+file(GLOB_RECURSE EXT_CPP "${CMAKE_CURRENT_SOURCE_DIR}/extension/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/extension/*.c")
+list(APPEND APP_SOURCES ${EXT_CPP})
+
+file(GLOB_RECURSE WIN_CPP "${CMAKE_CURRENT_SOURCE_DIR}/windows/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/windows/*.c")
+list(APPEND APP_SOURCES ${WIN_CPP})
+
+list(REMOVE_DUPLICATES APP_SOURCES)
+
+add_executable(app WIN32 ${APP_SOURCES})
+
 target_include_directories(app
     PRIVATE
-    "D:/Projects/Soft/Soft-main/build/windows/python/include"
-    "D:/Projects/Soft/Soft-main/src/cpp/private"
+    "${CMAKE_CURRENT_SOURCE_DIR}/build/windows/python/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/private"
     PUBLIC
-    "D:/Projects/Soft/Soft-main/src/cpp/public"
-    "D:/Projects/Soft/Soft-main/extension"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/public"
+    "${CMAKE_CURRENT_SOURCE_DIR}/extension"
 )
-target_link_directories(app PRIVATE "D:/Projects/Soft/Soft-main/build/windows/python/libs")
+target_link_directories(app PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/build/windows/python/libs")
 target_link_libraries(app PRIVATE "user32.lib")
 target_link_libraries(app PRIVATE "gdi32.lib")
 target_link_libraries(app PRIVATE "shlwapi.lib")

@@ -259,7 +259,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
     YGNodeFree(root_node);
-    uninitialize_python_module();
+    destroy_python_module();
     
     return 0;
 }

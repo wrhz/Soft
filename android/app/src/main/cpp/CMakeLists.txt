@@ -1,37 +1,28 @@
-# For more information about using CMake with Android Studio, read the
-# documentation: https://d.android.com/studio/projects/add-native-code.html.
-# For more examples on how to use CMake, see https://github.com/android/ndk-samples.
-
-# Sets the minimum CMake version required for this project.
 cmake_minimum_required(VERSION 3.22.1)
 
-# Declares the project name. The project name can be accessed via ${ PROJECT_NAME},
-# Since this is the top level CMakeLists.txt, the project name is also accessible
-# with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
-# build script scope).
 project("softapplication")
 
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
-#
-# In this top level CMakeLists.txt, ${CMAKE_PROJECT_NAME} is used to define
-# the target library name; in the sub-module's CMakeLists.txt, ${PROJECT_NAME}
-# is preferred for the same purpose.
-#
-# In order to load a library into your app from Java/Kotlin, you must call
-# System.loadLibrary() and pass the name of the library defined here;
-# for GameActivity/NativeActivity derived applications, the same library name must be
-# used in the AndroidManifest.xml file.
-add_library(${CMAKE_PROJECT_NAME} SHARED
-        # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp)
+add_library(${CMAKE_PROJECT_NAME} SHARED native-lib.cpp)
 
-# Specifies libraries CMake should link to your target library. You
-# can link libraries from various origins, such as libraries defined in this
-# build script, prebuilt third-party libraries, or Android system libraries.
-target_link_libraries(${CMAKE_PROJECT_NAME}
-        # List libraries link to the target library
-        android
-        log)
+target_link_libraries(${CMAKE_PROJECT_NAME} android log)
+
+file(GLOB_RECURSE SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/extension/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/extension/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/soft/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/soft/*.cpp"
+)
+
+add_library(init_extension SHARED "${CMAKE_CURRENT_SOURCE_DIR}/../python/init_extension.cpp" ${SOURCES})
+
+target_include_directories(init_extension PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(init_extension PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/python")
+target_include_directories(init_extension PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/extension")
+
+target_link_libraries(init_extension PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANDROID_ABI}/libpython3.12.so")
+
+set_target_properties(init_extension PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../python")
+
+set_target_properties(init_extension PROPERTIES PREFIX "")
+
+set_target_properties(init_extension PROPERTIES SUFFIX ".cpython-312.so")

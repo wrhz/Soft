@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var frameLayout: FrameLayout
 
+    private lateinit var initExtensionPythonModule: PyObject
+
     @Suppress("DEPRECATION")
     fun getRealScreenSize(context: Context): Pair<Int, Int> {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -71,12 +73,22 @@ class MainActivity : AppCompatActivity() {
         }
         py = Python.getInstance()
 
-        val init = py.getModule("init");
-        init.callAttr("init")
+        val platform = Python.getPlatform()
+        if (platform is AndroidPlatform) {
+            platform.redirectStdioToLogcat()
+        }
 
-        val main = py.getModule("lib.main")
+        val initPythonModule = py.getModule("init")
 
-        mainSoft = SoftData(main.callAttr("main"))
+        initPythonModule.callAttr("init")
+
+        initExtensionPythonModule = py.getModule("init_extension")
+
+        initExtensionPythonModule.callAttr("init")
+
+        val mainPythonModule = py.getModule("lib.main")
+
+        mainSoft = SoftData(mainPythonModule.callAttr("main"))
 
         typeface = FileManager.loadFontFromAssets(this, "fonts/${fontJson.fontFamilies[mainSoft.defaultFontFamily]}")
 
@@ -105,6 +117,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(frameLayout)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        initExtensionPythonModule.callAttr("destroy")
     }
 
     private fun draw(elementData: ElementData) {
