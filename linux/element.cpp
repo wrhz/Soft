@@ -34,9 +34,11 @@ namespace element
         }
     }
 
-    void Element::draw(cairo_t *cr, int width, int height, int font_size, cairo_font_face_t *cairo_face, Display* display, Window window, std::string font_family, int screen, soft::types::Element* _element)
+    void Element::draw(cairo_t *cr, int width, int height, int font_size, cairo_font_face_t *cairo_face, std::string font_family, soft::types::Element* _element)
     {
         cairo_set_source_rgb(cr, 1, 1, 1);
+
+        cairo_paint(cr); 
 
         cairo_set_source_rgb(cr, 0, 0, 0);
 
@@ -55,7 +57,7 @@ namespace element
 
         for (auto& child_element : _element->children)
         {
-            element::Element::draw(cr, width, height, font_size, cairo_face, display, window, font_family, screen, &child_element);
+            element::Element::draw(cr, width, height, font_size, cairo_face, font_family, &child_element);
         }
     }
 }

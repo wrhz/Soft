@@ -10,7 +10,6 @@ android {
     compileSdk {
         version = release(36)
     }
-
     defaultConfig {
         applicationId "com.example.softapplication"
         minSdk 24
@@ -38,6 +37,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.4"
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -53,6 +55,10 @@ android {
     }
     buildFeatures {
         viewBinding true
+        compose = true
+    }
+    composeOptions {
+
     }
 }
 
@@ -66,6 +72,11 @@ chaquopy {
 }
 
 dependencies {
+    implementation libs.androidx.ui
+    implementation libs.androidx.material
+    implementation libs.androidx.ui.tooling.preview
+    debugImplementation libs.androidx.ui.tooling
+
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
