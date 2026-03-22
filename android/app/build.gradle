@@ -37,9 +37,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -55,10 +52,6 @@ android {
     }
     buildFeatures {
         viewBinding true
-        compose = true
-    }
-    composeOptions {
-
     }
 }
 
@@ -66,17 +59,12 @@ chaquopy {
     defaultConfig {
         version = "3.12"
         pip {
-            install "pybind11"
+
         }
     }
 }
 
 dependencies {
-    implementation libs.androidx.ui
-    implementation libs.androidx.material
-    implementation libs.androidx.ui.tooling.preview
-    debugImplementation libs.androidx.ui.tooling
-
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material

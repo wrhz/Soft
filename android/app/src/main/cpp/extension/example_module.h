@@ -7,7 +7,7 @@
 
 namespace py = pybind11;
 
-class ExampleModule : public soft::SoftPythonModule
+class ExampleModule : public soft::module::SoftPythonModule
 {
 
     public:

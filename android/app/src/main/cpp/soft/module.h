@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-namespace soft
+namespace soft::module
 {
     class SoftPythonModule
     {

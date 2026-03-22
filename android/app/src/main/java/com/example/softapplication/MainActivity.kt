@@ -1,13 +1,12 @@
 package com.example.softapplication
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
+import android.view.WindowInsets
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -39,20 +38,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var initExtensionPythonModule: PyObject
 
     @Suppress("DEPRECATION")
-    fun getRealScreenSize(context: Context): Pair<Int, Int> {
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    fun getWindowUsableSize(): Pair<Int, Int> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val metrics = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                windowManager.currentWindowMetrics
-            } else {
-                windowManager.currentWindowMetrics
-            }
+            val metrics = windowManager.currentWindowMetrics
             val bounds = metrics.bounds
             Pair(bounds.width(), bounds.height())
         } else {
             val display = windowManager.defaultDisplay
             val size = Point()
-            display.getRealSize(size)
+            display.getSize(size)
             Pair(size.x, size.y)
         }
     }
@@ -62,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         SoLoader.init(this, false)
 
-        screenSize = getRealScreenSize(this)
+        screenSize = getWindowUsableSize()
 
         rootNode = YogaNodeFactory.create()
 
@@ -109,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         if (page !== null) {
             val rootElement = ElementData(page!!.call()["element"])
 
-            ElementData.setStyle(rootNode, rootElement, typeface, fontJson.fontSize)
+            ElementData.setStyle(rootNode, rootElement, typeface, fontJson.fontSize, resources)
 
             rootNode.calculateLayout(screenSize.first.toFloat(), screenSize.second.toFloat())
 

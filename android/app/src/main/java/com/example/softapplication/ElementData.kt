@@ -1,12 +1,10 @@
 package com.example.softapplication
 
+import android.content.res.Resources
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.Typeface
-import android.util.Log
-import android.view.Gravity
+import android.util.TypedValue
 import com.chaquo.python.PyObject
-import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaNode
 import com.facebook.yoga.YogaNodeFactory
 
@@ -18,14 +16,20 @@ class ElementData {
     val node: YogaNode = YogaNodeFactory.create()
 
     companion object {
-        fun setStyle(parentNode: YogaNode, element: ElementData, typeface: Typeface?, fontSize: Float) {
+        fun setStyle(parentNode: YogaNode, element: ElementData, typeface: Typeface?, fontSize: Float, resources: Resources) {
             Style.handleStyle(element.node, element.style)
             val tag: String = element.tag
 
             when (tag) {
                 "text" -> {
+                    val pxSize = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP,
+                        fontSize,
+                        resources.displayMetrics
+                    )
+
                     val paint = Paint().apply {
-                        this.textSize = fontSize
+                        this.textSize = pxSize
                         this.typeface = typeface ?: Typeface.DEFAULT_BOLD
                     }
 
@@ -41,7 +45,7 @@ class ElementData {
             parentNode.addChildAt(element.node, parentNode.childCount)
 
             for (child: ElementData in element.children) {
-                setStyle(element.node, child, typeface, fontSize)
+                setStyle(element.node, child, typeface, fontSize, resources)
             }
         }
     }

@@ -27,15 +27,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62d76c9d-f7f2-46f1-abf3-2c49d4bb2558" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/ElementData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/softapplication/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../extension/example_module.h" beforeDir="false" afterPath="$PROJECT_DIR$/../extension/example_module.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../linux/.clangd" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/.clangd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../linux/test" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/test" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../linux/test.c" beforeDir="false" afterPath="$PROJECT_DIR$/../linux/test.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/cpp/public/soft/module.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/cpp/public/soft/module.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +43,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=Default, isTemplate=false, identifier=serial=192.168.3.5:39023;connection=cc20c619)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
