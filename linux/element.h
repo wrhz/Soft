@@ -12,6 +12,9 @@ namespace element
 {
     class Element
     {
+    private:
+        static void render_text(cairo_t *cr, soft::types::Element& element);
+
     public:
         Element();
         static void set_style(cairo_t *cr, YGNodeRef parent_node, soft::types::Element& element);

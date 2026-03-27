@@ -1,6 +1,7 @@
 CompileFlags:
     Compiler: gcc
     Add:
+        - -D__linux__
         - -I/usr/include/python3.12
         - -I../src/cpp/private
         - -I../src/cpp/public

@@ -9,7 +9,9 @@
 #include <vector>
 #include <pybind11/embed.h>
 
-#ifdef _WIN32
+#ifdef __linux__
+#include <cairo/cairo.h>
+#else _WIN32
 #include <windows.h>
 #endif
 
@@ -26,7 +28,9 @@ namespace soft::types {
         std::vector<Element*> children = {};
         std::map<std::string, std::string> style = {};
         YGNodeRef node = nullptr;
-#ifdef _WIN32
+#ifdef __linux__
+        void (*render)(cairo_t *cr, Element& element) = nullptr;
+#elif _WIN32
         void (*render)(HDC hdc, Element& element) = nullptr;
 #endif
     };

@@ -7,6 +7,17 @@
 
 namespace element
 {
+    void Element::render_text(cairo_t *cr, soft::types::Element& element)
+    {
+        std::string text = element.text;
+            
+        cairo_move_to(cr, YGNodeLayoutGetLeft(element.node), YGNodeLayoutGetTop(element.node) + YGNodeLayoutGetHeight(element.node));
+
+        cairo_show_text(cr, text.c_str());
+
+        cairo_stroke(cr);
+    }
+
     void Element::set_style(cairo_t *cr, YGNodeRef parent_node, soft::types::Element& element)
     {
         element.node = YGNodeNew();
@@ -24,13 +35,18 @@ namespace element
 
             YGNodeStyleSetWidth(element.node, x);
             YGNodeStyleSetHeight(element.node, y);
+
+            element.render = render_text;
+        }
+        else {
+            element.render = [](cairo_t *cr, soft::types::Element& element) {};
         }
 
         YGNodeInsertChild(parent_node, element.node, YGNodeGetChildCount(parent_node));
 
         for (auto& child_element : element.children)
         {
-            element::Element::set_style(cr, element.node, child_element);
+            element::Element::set_style(cr, element.node, *child_element);
         }
     }
 
@@ -42,22 +58,11 @@ namespace element
 
         cairo_set_source_rgb(cr, 0, 0, 0);
 
-        std::string tag = _element->tag;
-        
-        if (tag == "text")
-        {
-            std::string text = _element->text;
-            
-            cairo_move_to(cr, YGNodeLayoutGetLeft(_element->node), YGNodeLayoutGetTop(_element->node) + YGNodeLayoutGetHeight(_element->node));
-
-            cairo_show_text(cr, text.c_str());
-
-            cairo_stroke(cr);
-        }
+        _element->render(cr, *_element);
 
         for (auto& child_element : _element->children)
         {
-            element::Element::draw(cr, width, height, font_size, cairo_face, font_family, &child_element);
+            element::Element::draw(cr, width, height, font_size, cairo_face, font_family, child_element);
         }
     }
 }
