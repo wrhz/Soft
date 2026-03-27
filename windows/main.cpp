@@ -108,12 +108,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
                 int oldBkMode = SetBkMode(hdc, TRANSPARENT);
 
-                soft::types::Element* root_element = new soft::types::Element(page().attr("element"));
-                element::Element::set_style(root_node, *root_element, hdc);
+                soft::types::Element* root_element = new soft::types::Element(page.attr("element"));
+                element::Element::init_element(root_node, *root_element, hdc);
 
                 YGNodeCalculateLayout(root_node, float(rect.right - rect.left), float(rect.bottom - rect.top), YGDirectionLTR);
 
-                element::Element::draw(*root_element, default_font_family, hdc, rect, hFont);
+                element::Element::draw(root_element, default_font_family, hdc, rect, hFont);
                 delete root_element;
                 
                 SelectObject(hdc, hOldFont);
@@ -163,7 +163,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         main_soft = soft::types::Soft(main_soft_object);
 
-        page = main_soft.home;
+        page = main_soft.home();
 
         std::wstring title = utils::utf8_to_wstring(soft_config["title"]);
 

@@ -11,9 +11,12 @@
 
 namespace element {
     class Element {
+    private:
+        static void render_text(HDC hdc, soft::types::Element& element);
+        
     public:
-        static void set_style(YGNodeRef parent_node, soft::types::Element& element, HDC hdc);
-        static void draw(soft::types::Element element, std::string font_family, HDC hdc, RECT rect, HFONT hFont);
+        static void init_element(YGNodeRef parent_node, soft::types::Element& element, HDC hdc);
+        static void draw(soft::types::Element* element, std::string font_family, HDC hdc, RECT rect, HFONT hFont);
     };
 }
 

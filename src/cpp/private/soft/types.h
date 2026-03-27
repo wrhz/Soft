@@ -1,13 +1,17 @@
 #ifndef SOFT_TYPES_H
 #define SOFT_TYPES_H
 
-#include "pybind11/pytypes.h"
 #include "yoga/Yoga.h"
+#include <functional>
 #include <map>
 #include <string>
 #include <tuple>
 #include <vector>
 #include <pybind11/embed.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace py = pybind11;
 
@@ -19,9 +23,12 @@ namespace soft::types {
         
         std::string tag = "";
         std::string text = "";
-        std::vector<Element> children = {};
+        std::vector<Element*> children = {};
         std::map<std::string, std::string> style = {};
         YGNodeRef node = nullptr;
+#ifdef _WIN32
+        void (*render)(HDC hdc, Element& element) = nullptr;
+#endif
     };
 
     class Soft {

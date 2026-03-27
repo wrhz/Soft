@@ -36,7 +36,7 @@ namespace soft::types {
             {
                 for (auto child : value)
                 {
-                    Element child_struct(child.cast<py::dict>());
+                    Element* child_struct = new Element(child.cast<py::dict>());
                     children.push_back(child_struct);
                 }
             }

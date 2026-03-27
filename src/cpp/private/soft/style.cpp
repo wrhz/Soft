@@ -3,7 +3,7 @@
 namespace soft::style
 {
     void Style::handle_style(YGNodeRef node, std::map<std::string, std::string> styles)
-    {        
+    {
         std::string display = styles["display"];
 
         YGNodeStyleSetMargin(node, YGEdgeAll, 5);
