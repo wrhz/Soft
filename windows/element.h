@@ -13,6 +13,7 @@ namespace element {
     class Element {
     private:
         static void render_text(HDC hdc, soft::types::Element& element);
+        static void render_image(HDC hdc, soft::types::Element& element);
         
     public:
         static void init_element(YGNodeRef parent_node, soft::types::Element& element, HDC hdc);

@@ -23,6 +23,10 @@ namespace soft::types {
             {
                 text = value.cast<std::string>();
             }
+            else if (key == "src")
+            {
+                src = value.cast<std::string>();
+            }
             else if (key == "style")
             {
                 for (auto style_item : value.cast<py::dict>())

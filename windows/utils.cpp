@@ -1,6 +1,21 @@
 #include "utils.h"
 
 namespace utils {
+    std::string getExeParentDirString() {
+        wchar_t exePath[MAX_PATH] = { 0 };
+        
+        DWORD length = GetModuleFileNameW(NULL, exePath, MAX_PATH);
+        if (length == 0 || length >= MAX_PATH) {
+            return "";
+        }
+
+        if (!PathRemoveFileSpecW(exePath)) {
+            return "";
+        }
+
+        return utils::wstring_to_utf8(exePath);
+    }
+
     std::wstring utf8_to_wstring(const std::string& utf8_str) {
         if (utf8_str.empty()) return L"";
         

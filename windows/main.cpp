@@ -11,8 +11,10 @@
 
 #include "element.h"
 #include "utils.h"
+#include "vars.h"
 #include "soft/types.h"
 #include "soft/get_json.h"
+#include <gdiplus.h>
 
 namespace py = pybind11;
 namespace fs = std::filesystem;
@@ -21,26 +23,10 @@ HWND hwnd;
 HFONT hFont;
 soft::types::Soft main_soft;
 std::string default_font_family = "Arial";
-fs::path exe_dir;
 py::object page;
 nlohmann::json soft_config = soft::get_json::file_get_json(exe_dir / "config" / "soft.json");
 nlohmann::json platform_config = soft::get_json::file_get_json(exe_dir / "config" / "platform_config.json")["windows"];
 YGNodeRef root_node = nullptr;
-
-std::string GetExeParentDirString() {
-    wchar_t exePath[MAX_PATH] = { 0 };
-    
-    DWORD length = GetModuleFileNameW(NULL, exePath, MAX_PATH);
-    if (length == 0 || length >= MAX_PATH) {
-        return "";
-    }
-
-    if (!PathRemoveFileSpecW(exePath)) {
-        return "";
-    }
-
-    return utils::wstring_to_utf8(exePath);
-}
 
 void setup_console_for_python()
 {
@@ -60,7 +46,7 @@ void init()
 
     py::module_ sys = py::module_::import("sys");
 
-    fs::path exe_dir = GetExeParentDirString();
+    exe_dir = utils::getExeParentDirString();
     
     fs::path lib_path = exe_dir / "lib";
     sys.attr("path").attr("append")(lib_path.string());
@@ -138,7 +124,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    exe_dir = GetExeParentDirString();
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     try
     {
@@ -260,6 +247,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     YGNodeFree(root_node);
     destroy_python_module();
+    Gdiplus::GdiplusShutdown(gdiplusToken);
     
     return 0;
 }

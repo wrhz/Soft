@@ -1,22 +1,4 @@
-from soft.elements import Text, View
-from soft.style import Style
-import os
-
-import example_module # type: ignore
+from soft.elements import Image
 
 def hello():
-    style = Style(
-        display = "flex",
-        flex_direction = "column",
-        align_items = "center",
-        justify_content = "center",
-    )
-
-    print(example_module.hello())
-
-    return View(
-        Text(
-            "Hello Soft!"
-        ),
-        style=style,
-    )
+    return Image(src="hello.png")

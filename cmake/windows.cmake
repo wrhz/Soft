@@ -24,5 +24,6 @@ target_include_directories(app
 target_link_directories(app PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/build/windows/python/libs")
 target_link_libraries(app PRIVATE "user32.lib")
 target_link_libraries(app PRIVATE "gdi32.lib")
+target_link_libraries(app PRIVATE "gdiplus.lib")
 target_link_libraries(app PRIVATE "shlwapi.lib")
 target_link_libraries(app PRIVATE "python312.lib")

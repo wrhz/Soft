@@ -1,13 +1,27 @@
 #include "element.h"
 #include "utils.h"
+#include "vars.h"
 #include "yoga/YGNodeLayout.h"
+#include "yoga/YGNodeStyle.h"
 #include <string>
+#include <windef.h>
+#include <wingdi.h>
+#include <winuser.h>
 
 namespace element {
     void Element::render_text(HDC hdc, soft::types::Element& element)
     {
         std::wstring text = utils::utf8_to_wstring(element.text);
         TextOutW(hdc, YGNodeLayoutGetLeft(element.node), YGNodeLayoutGetTop(element.node), text.c_str(), text.length());
+    }
+
+    void Element::render_image(HDC hdc, soft::types::Element& element)
+    {
+        if (element.image != nullptr)
+        {
+            Gdiplus::Graphics graphics(hdc);
+            graphics.DrawImage(element.image, YGNodeLayoutGetLeft(element.node), YGNodeLayoutGetTop(element.node));
+        }
     }
 
     void Element::init_element(YGNodeRef parent_node, soft::types::Element& element, HDC hdc)
@@ -26,6 +40,19 @@ namespace element {
             YGNodeStyleSetHeight(element.node, float(size.cy));
 
             element.render = render_text;
+        }
+        else if (tag == "image")
+        {
+            std::string src = element.src;
+
+            std::string imagePath = (exe_dir / "resources" / "images" / src).string();
+
+            element.image = new Gdiplus::Image(utils::utf8_to_wstring(imagePath).c_str());
+
+            YGNodeStyleSetWidth(element.node, float(element.image->GetWidth()));
+            YGNodeStyleSetHeight(element.node, float(element.image->GetHeight()));
+
+            element.render = render_image;
         }
         else {
             element.render = [](HDC hdc, soft::types::Element& element) {};

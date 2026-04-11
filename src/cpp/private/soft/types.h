@@ -11,9 +11,11 @@
 
 #ifdef __linux__
 #include <cairo/cairo.h>
-#else _WIN32
+#else
 #include <windows.h>
 #endif
+
+#include <gdiplus.h>
 
 namespace py = pybind11;
 
@@ -25,12 +27,14 @@ namespace soft::types {
         
         std::string tag = "";
         std::string text = "";
+        std::string src = "";
         std::vector<Element*> children = {};
         std::map<std::string, std::string> style = {};
         YGNodeRef node = nullptr;
 #ifdef __linux__
         void (*render)(cairo_t *cr, Element& element) = nullptr;
 #elif _WIN32
+        Gdiplus::Image* image = nullptr;
         void (*render)(HDC hdc, Element& element) = nullptr;
 #endif
     };

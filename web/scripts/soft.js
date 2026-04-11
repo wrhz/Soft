@@ -1,6 +1,11 @@
 import GetFile from "./getFile.js";
+import GetFile from "./element.js";
 
 var pyodide = await loadPyodide();
+
+const functionMap = {
+
+}
 
 async function unzip(zip_path, extract_path) {
     pyodide.FS.writeFile(zip_path, new Uint8Array(await GetFile.getFileArrayBuffer(zip_path)));
@@ -65,7 +70,8 @@ function handleStyles(element, styles) {
                 break;
             case "padding_left":
                 element.style.paddingLeft = value;
-            case _:
+                break;
+            default:
                 console.error(`Unknown style: ${key}`);
         }
     });
